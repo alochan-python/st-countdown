@@ -2,139 +2,684 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>科目B 必勝カウントダウン</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#14324f">
+<title>科目B 必勝ダッシュボード</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%2314324f%22/%3E%3Cpath d=%22M4 8.5l2.5 2.5L12 5%22 stroke=%22white%22 stroke-width=%222%22 fill=%22none%22/%3E%3C/svg%3E">
 <style>
-:root{--bg:#f5f6f8;--card:#fff;--ink:#1d2430;--sub:#5d6675;--line:#e1e4ea;--navy:#1f4e78;--red:#c00000;--ok:#2e7d32;--warn:#b26a00;--bar:#1f4e78;--barbg:#e6ebf1;--hi:#fff4cc}
-@media (prefers-color-scheme:dark){:root{--bg:#12151a;--card:#1b2028;--ink:#e8ebf0;--sub:#9aa3b2;--line:#2c333e;--navy:#6ea8dc;--red:#ff6b6b;--ok:#6fcf73;--warn:#f0b04a;--bar:#6ea8dc;--barbg:#2a313c;--hi:#3a3420}}
+:root{
+  --bg:#eef1f5;--card:#fff;--ink:#17202b;--sub:#566070;--line:#dde2e9;
+  --navy:#14324f;--b1:#1e5aa8;--b1l:#cfe0f5;--b2:#0f7669;--b2l:#cdebe6;
+  --ok:#23803a;--okl:#dff3e3;--warn:#b25e00;--warnl:#fff1dc;--exam:#b3122e;--examl:#fde3e7;
+  --plan:#c3ccd8;--hi:#fff7d6;--other:#6b5ca5;--otherl:#e7e3f5
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f141a;--card:#18202a;--ink:#e7ecf2;--sub:#9aa6b6;--line:#2a3442;
+  --navy:#9cc3ee;--b1:#6aa5ec;--b1l:#1f3550;--b2:#4cc2b0;--b2l:#173a36;
+  --ok:#5fd07a;--okl:#173523;--warn:#f2a640;--warnl:#3a2a12;--exam:#ff6b81;--examl:#3d1820;
+  --plan:#3b4757;--hi:#3a3418;--other:#a99be0;--otherl:#2a2542
+}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-main{max-width:980px;margin:0 auto;padding:16px}
-h1{font-size:18px;margin:0 0 4px}
-h2{font-size:15px;margin:0 0 10px;color:var(--navy)}
-.sub{color:var(--sub);font-size:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
-.hero{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.days{font-size:56px;font-weight:800;color:var(--red);line-height:1}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
-.kpi{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
-.kpi b{display:block;font-size:22px}
-.kpi span{font-size:12px;color:var(--sub)}
-.flow{white-space:pre-wrap;font-size:15px;background:var(--hi);border-radius:8px;padding:10px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.chip{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:13px}
-.row{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:10px 0}
-.bar{grid-column:1/-1;height:8px;background:var(--barbg);border-radius:4px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--bar)}
-.scroll{overflow-x:auto}
-table{border-collapse:collapse;font-size:13px;min-width:720px;width:100%}
-th,td{border-bottom:1px solid var(--line);padding:6px;text-align:center;white-space:nowrap}
-th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card)}
-tr.today td{background:var(--hi)}
-.j{font-weight:800;font-size:16px}
-.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--red)}
-.status{font-weight:700}
-footer{color:var(--sub);font-size:12px;text-align:center;margin:20px 0}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
+main{max-width:1000px;margin:0 auto;padding:16px 16px 40px}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 14px;min-height:44px}
+button.primary{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:700}
+@media (prefers-color-scheme:dark){button.primary{color:#0f141a}}
+button.done{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:700}
+button.ghost{background:transparent}
+input,select,textarea{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px;min-height:40px}
+input[type=number]{width:84px}
+textarea{width:100%;min-height:64px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+h2{font-size:17px;margin:0 0 12px;color:var(--navy);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sub{color:var(--sub);font-size:14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.tag{display:inline-block;font-size:13px;font-weight:700;border-radius:6px;padding:2px 8px;white-space:nowrap}
+.t-b1{background:var(--b1l);color:var(--b1)}.t-b2{background:var(--b2l);color:var(--b2)}
+.t-ot{background:var(--otherl);color:var(--other)}.t-ev{background:var(--line);color:var(--sub)}
+.t-ok{background:var(--okl);color:var(--ok)}.t-warn{background:var(--warnl);color:var(--warn)}.t-exam{background:var(--examl);color:var(--exam)}
+
+/* ① countdown */
+.count{display:flex;align-items:center;gap:16px;flex-wrap:wrap;border-left:6px solid var(--exam)}
+.count .big{font-size:52px;font-weight:800;color:var(--exam);line-height:1}
+.count .lbl{font-weight:700}
+.stages{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.stage{flex:1 1 110px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;font-size:13px;color:var(--sub)}
+.stage b{display:block;font-size:14px;color:var(--ink)}
+.stage.cur{border:2px solid var(--navy);background:var(--hi);color:var(--ink)}
+.stage.past{opacity:.6}
+.stage.final{border-color:var(--exam)}
+.streak{font-weight:700}
+
+/* ② next */
+.next{border:2px solid var(--navy);padding:20px}
+.next .time{font-size:20px;font-weight:700;color:var(--sub)}
+.next .title{font-size:30px;font-weight:800;line-height:1.3;margin:4px 0}
+.next .unit{font-size:18px;color:var(--sub)}
+.next .meta{font-size:18px;margin-top:6px}
+.next .btns{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+.next .btns button{font-size:20px;min-height:60px;padding:12px 28px;flex:1 1 180px}
+.alert{border-radius:10px;padding:10px 12px;font-weight:700;margin-top:12px}
+.alert.warn{background:var(--warnl);color:var(--warn)}
+.alert.ok{background:var(--okl);color:var(--ok)}
+.alert.info{background:var(--b1l);color:var(--b1)}
+.running{font-size:22px;font-weight:800;color:var(--ok)}
+
+/* ③ ring */
+.ach{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.ring{width:150px;height:150px;flex:none}
+.ach .txt{flex:1;min-width:220px}
+.ach .pctline{font-size:20px;font-weight:700}
+.bar{height:14px;background:var(--line);border-radius:7px;overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:7px;transition:width .3s}
+.achieved{border:2px solid var(--ok);background:linear-gradient(0deg,var(--okl),var(--card) 60%)}
+.achieved-msg{font-size:22px;font-weight:800;color:var(--ok)}
+
+/* ④ today numbers */
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.num{border:1px solid var(--line);border-radius:12px;padding:12px}
+.num .k{font-size:14px;color:var(--sub);font-weight:700}
+.num .v{font-size:24px;font-weight:800}
+.num .s{font-size:14px;color:var(--sub)}
+.left ul{margin:6px 0 0;padding-left:1.2em;font-size:17px}
+.left li{margin:2px 0}
+
+/* ⑤ schedule */
+.task{display:grid;grid-template-columns:92px 1fr;gap:10px;border-top:1px solid var(--line);padding:12px 0}
+.task:first-child{border-top:0}
+.task .tm{font-weight:700;font-size:15px;color:var(--sub)}
+.task .tt{font-weight:700;font-size:17px}
+.task.isdone .tt{text-decoration:line-through;text-decoration-color:var(--ok)}
+.task.isnext{background:var(--hi);border-radius:10px;padding:12px 8px;margin:0 -8px}
+.task.late .tm{color:var(--warn)}
+.task .ctl{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.task .ctl label{font-size:14px;color:var(--sub);display:flex;gap:6px;align-items:center}
+.task details{margin-top:6px}
+.task summary{cursor:pointer;color:var(--sub);font-size:14px;min-height:32px}
+.ev .tt{font-weight:600;color:var(--sub)}
+
+/* ⑥ progress */
+.pg{margin:12px 0}
+.pg .hd{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.pg .nm{font-weight:700;font-size:16px}
+.pg .ct{font-weight:800;font-size:18px}
+.pg .rm{margin-left:auto;font-size:15px}
+.pg .bar{height:18px;position:relative;margin-top:4px}
+.pg .minmark{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.45}
+.cum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+
+/* ⑦ chart */
+.chartwrap{position:relative;width:100%}
+.chartwrap svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--card);border-radius:8px;padding:8px 10px;font-size:14px;line-height:1.45;white-space:nowrap;display:none;z-index:2}
+.legend{display:flex;gap:16px;font-size:14px;color:var(--sub);flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+
+/* ⑧ subs */
+.subrow{display:grid;grid-template-columns:1fr auto;gap:8px;border-top:1px solid var(--line);padding:10px 0}
+.subrow:first-child{border-top:0}
+.subrow .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;grid-column:1/-1}
+.subrow .ctl label{font-size:14px;color:var(--sub);display:flex;gap:6px;align-items:center}
+
+/* ⑨ nav */
+.daynav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.daynav .cur{font-size:18px;font-weight:800}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 0;-webkit-overflow-scrolling:touch}
+.chips button{min-height:40px;padding:6px 10px;font-size:14px;white-space:nowrap}
+.chips button.sel{background:var(--navy);color:#fff;border-color:var(--navy)}
+@media (prefers-color-scheme:dark){.chips button.sel{color:#0f141a}}
+.notes{font-size:15px;background:var(--hi);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;transition:opacity .25s,transform .25s;
+  background:var(--ok);color:#fff;border-radius:14px;padding:14px 22px;font-weight:800;font-size:18px;text-align:center;z-index:10;box-shadow:0 6px 24px rgba(0,0,0,.2);pointer-events:none;max-width:calc(100% - 32px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{color:var(--sub);font-size:14px;text-align:center}
+footer .row{justify-content:center;margin:10px 0}
+@media (max-width:600px){
+  .next .title{font-size:24px}
+  .count .big{font-size:42px}
+  .task{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <main id="app"></main>
-<footer id="foot"></footer>
+<footer>
+  <div class="row">
+    <button id="exportBtn" class="ghost">データ書き出し（バックアップ）</button>
+    <label class="row" style="gap:6px"><span>読み込み</span><input id="importFile" type="file" accept="application/json"></label>
+  </div>
+  <div>データはこの端末のブラウザ（localStorage）に保存されます。iPadとMacは別々に保存されるため、移すときは書き出し→読み込みを使ってください。</div>
+</footer>
+<div id="toast" role="status" aria-live="polite"></div>
 <script>
-const D = {"generated": "2026-11-09 12:19", "exam": "2026-11-23", "params": {"cap": 90, "floor": 240, "th1": 1.1, "th2": 1, "th3": 0.5, "ex": 9, "set": 2, "lap": 2}, "dates": ["2026-11-09", "2026-11-10", "2026-11-11", "2026-11-12", "2026-11-13", "2026-11-14", "2026-11-15", "2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20", "2026-11-21", "2026-11-22", "2026-11-23"], "flow": ["①B1誤答高速3問（30分）\n②B1じっくり1問（60分）\n③TAC論文2回目 執筆：骨子→ア/イ/ウ割当→本文（120分・最後まで書き切る）\n④B1じっくり1問（60分）", "午前：B1じっくり1問（60分）→B1未見高速3問（60分）\n午後：TAC論文2回目 見直し（45分）→提出（15分）→B1誤答高速6問（60分）\n※眠気時は英語20〜30分で切替（ST外）\n夜：19:30 Tomo Future（ST学習は入れない）", "午前：B1本番90分①（途中で解答を見ない）\n昼：答え合わせ・原因分析60分（要求読違い/根拠見落とし/表現ズレ/時間不足）\n午後：B2骨子1問（30分）→未見高速2問（40分）→誤答高速3問（30分）\n夜：19:00 Tomo Future", "①B1じっくり1問（60分）\n②B1未見高速2問（40分）＋誤答高速3問（30分）\n③ITEC論文1本目 執筆（120分・最後まで）", "①B1誤答高速3問（30分）\n②B1じっくり2問（120分）\n③ITEC論文1 見直し（30分）→提出（15分）\n④B1未見高速2問（40分）＋B2骨子1問（30分）", "【土・最大90分】\nB1本番90分②のみ\n答え合わせは明日。家族時間優先", "【日・最大90分】\n昨日のB1答え合わせ・原因分析（60分）\n→B2骨子1問（30分）\n家族時間優先", "①B1未見高速3問（60分）＋誤答高速3問（30分）\n②B1じっくり1問（60分）\n③ITEC論文2本目 執筆（120分・最後まで）", "午前：B1誤答高速5問（50分）→B1じっくり1問（60分）\n午後：ITEC論文2 見直し（45分）→提出（15分）→B2骨子1問（30分）→未見高速2問（40分）\n夜：19:30 Tomo Future", "午前：B1本番90分③\n昼：答え合わせ・原因分析（60分）\n午後：B2骨子1問（30分）→誤答高速4問（40分）→未見高速1問（20分）\n夜：19:00 Tomo Future", "①B1未見高速3問（60分）＋誤答高速3問（30分）\n②B1弱点復習90分（本番①〜③の失点パターン潰し）\n③B2骨子2問（60分）：骨子込み120分完走の確認", "TAC全国模試（紙答案・A-1/A-2はやらない）\n①B1 90分＝本番演習④\n②B2 120分フル論文\n③B1答え合わせ・原因分析（60分）\n④答案提出準備・提出（B1/B2）", "【土・最大90分】\nB1間違い問題の誤答高速4問（40分）\n本番で再発しそうな弱点だけ復習（50分）\n新しい問題に手を出さない", "【日・最大90分・早めに終了】\nB1典型ミス確認（20分）\nB2固定骨子を白紙から再現（30分）\nア・イ・ウ展開確認（25分）\n新しい問題に手を出さない", "★科目B本番★\nB1：設問要求→本文根拠→解答へ変換\nB2：骨子10〜15分→ア/イ/ウ割当→問題固有条件→120分で完走"], "actMin": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], "memo": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], "tasks": [{"key": "jk", "label": "B1じっくり（30分解答＋30分答え合わせ）", "unit": "問", "std": 60, "min": 6, "target": 8, "plan": [2, 1, 0, 1, 2, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], "act": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}, {"key": "gt", "label": "B1誤答高速（根拠確認→自分の言葉で再回答）", "unit": "問", "std": 10, "min": 18, "target": 36, "plan": [3, 6, 3, 3, 3, 0, 0, 3, 5, 4, 3, 0, 4, 0, 0], "act": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}, {"key": "mk", "label": "B1未見高速（15〜20分・詰まったら解答確認）", "unit": "問", "std": 20, "min": 10, "target": 15, "plan": [0, 3, 2, 2, 2, 0, 0, 3, 2, 1, 3, 0, 0, 0, 0], "act": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}, {"key": "hb", "label": "B1本番90分（2大問・途中で解答を見ない）", "unit": "ｾｯﾄ", "std": 90, "min": 4, "target": 4, "plan": [0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0], "act": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}, {"key": "aw", "label": "B1本番 答え合わせ・原因分析（4分類）", "unit": "回", "std": 60, "min": 4, "target": 4, "plan": [0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0], "act": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}, {"key": "kk", "label": "B2骨子（骨子→ア/イ/ウ割当→固有条件）", "unit": "問", "std": 30, "min": 6, "target": 8, "plan": [0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 2, 0, 0, 1, 0], "act": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}, {"key": "fl", "label": "B2フル論文（骨子込み120分）", "unit": "本", "std": 120, "min": 4, "target": 4, "plan": [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0], "act": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}, {"key": "sb", "label": "答案提出（実績は提出管理の提出日から自動）", "unit": "通", "std": 15, "min": 5, "target": 5, "plan": [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2, 0, 0, 0], "act": null}, {"key": "ot", "label": "その他：論文仕上げ・B1弱点復習・固定骨子確認", "unit": "分", "std": 1, "min": 305, "target": 305, "plan": [0, 45, 0, 0, 30, 0, 0, 0, 45, 0, 90, 0, 50, 45, 0], "act": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}], "subs": [{"name": "TAC論文2回目（添削）", "due": "2026-11-10", "status": "作成中", "submitted": null, "returned": null, "memo": "内容再検討済→本文未執筆。11/9執筆→11/10提出（最優先）。B2フル論文①としてカウント"}, {"name": "ITEC論文1本目（添削）", "due": "2026-11-13", "status": "未着手", "submitted": null, "returned": null, "memo": "11/12執筆→11/13提出。B2フル論文②としてカウント"}, {"name": "ITEC論文2本目（添削）", "due": "2026-11-17", "status": "未着手", "submitted": null, "returned": null, "memo": "11/16執筆→11/17提出。B2フル論文③としてカウント"}, {"name": "TAC全国模試 B-1", "due": "2026-11-20", "status": "未着手", "submitted": null, "returned": null, "memo": "紙答案・90分本番形式。B1本番90分④としてカウント（A-1/A-2はやらない）"}, {"name": "TAC全国模試 B-2", "due": "2026-11-20", "status": "未着手", "submitted": null, "returned": null, "memo": "紙答案・120分フル論文。B2フル論文④としてカウント"}]};
-const $ = s => document.querySelector(s);
+"use strict";
+/* ================= 計画データ（変更しない基本計画） ================= */
+const EXAM = "2026-11-23";
+const HOLIDAYS = ["2026-11-03", "2026-11-23"];
+const WEEKEND_CAP = 90;
+const STREAK_TH = 0.8;          // 予定の80%以上完了で「学習達成日」
+const SET_Q = 2;                // 本番1セット＝2大問
+const TYPES = {
+  jk: {name: "B1じっくり", grp: "b1", unit: "大問", desc: "30分解答＋30分答え合わせ"},
+  gt: {name: "B1誤答高速", grp: "b1", unit: "大問", desc: "模範解答→本文根拠→理由→答えを隠して自分の言葉で再回答（1大問8〜12分）"},
+  mk: {name: "B1未見高速", grp: "b1", unit: "大問", desc: "15〜20分で自力→詰まったら解答確認→本文根拠と解答への変換方法を確認"},
+  hb: {name: "B1本番90分", grp: "b1", unit: "セット", desc: "2大問90分。途中で模範解答を見ない"},
+  aw: {name: "B1答え合わせ・原因分析", grp: "b1", unit: "回", desc: "設問要求読み違い／根拠見落とし／表現ズレ／時間不足に分類"},
+  kk: {name: "B2骨子", grp: "b2", unit: "問", desc: "骨子作成→ア・イ・ウへ割当→問題固有条件を追加"},
+  fl: {name: "B2フル論文", grp: "b2", unit: "本", desc: "固定論文を問題要求に合わせて変形。骨子込み120分で完走"},
+  sb: {name: "答案提出", grp: "b2", unit: "通", desc: "提出管理と連動"},
+  ot: {name: "仕上げ・弱点・確認", grp: "ot", unit: "分", desc: ""},
+  ev: {name: "予定", grp: "ev", unit: "", desc: ""}
+};
+const TARGETS = {jk: {min: 6, tgt: 8}, gt: {min: 18, tgt: 36}, mk: {min: 10, tgt: 15}, hb: {min: 4, tgt: 4}, kk: {min: 6, tgt: 8}, fl: {min: 4, tgt: 4}, sb: {min: 5, tgt: 5}};
+const SUBS = [
+  {id: "tac2", name: "TAC論文2回目（添削）", due: "2026-11-10", init: "作成中", memo: "内容再検討済み→本文を書く。最優先"},
+  {id: "itec1", name: "ITEC論文1本目（添削）", due: "2026-11-13", init: "未着手", memo: ""},
+  {id: "itec2", name: "ITEC論文2本目（添削）", due: "2026-11-17", init: "未着手", memo: ""},
+  {id: "mockB1", name: "TAC全国模試 B-1", due: "2026-11-20", init: "未着手", memo: "紙答案・90分＝B1本番90分④（A-1/A-2はやらない）"},
+  {id: "mockB2", name: "TAC全国模試 B-2", due: "2026-11-20", init: "未着手", memo: "紙答案・120分＝B2フル論文④"}
+];
+const STATUSES = ["未着手", "作成中", "完成", "提出済み", "返却済み"];
+// [type, 予定分, 予定数, 問題名, 単元・やり方, {sub:提出物ID, subs:[...]}]
+const PLAN = {
+  "2026-11-09": {note: "TAC論文2回目を今日中に最後まで書き切る", items: [
+    ["gt", 30, 3, "演習1〜3 誤答（1周目）", "根拠箇所→理由→自分の言葉で再回答"],
+    ["jk", 60, 1, "B1じっくり①", "未実施・重要問題"],
+    ["jk", 60, 1, "B1じっくり②", "理解が弱い問題"],
+    ["fl", 120, 1, "TAC論文2回目 本文執筆", "骨子→ア/イ/ウ割当→問題固有条件→本文（最後まで）", {sub: "tac2"}]]},
+  "2026-11-10": {note: "TAC論文2回目を提出", items: [
+    ["jk", 60, 1, "B1じっくり③", "未実施・重要問題"],
+    ["mk", 60, 3, "未見過去問 3問", "パターンを広げる"],
+    ["ot", 45, 0, "TAC論文2回目 見直し・仕上げ", "誤字・設問対応・字数"],
+    ["sb", 15, 1, "TAC論文2回目 提出", "提出管理に自動反映", {subs: ["tac2"]}],
+    ["gt", 60, 6, "演習4〜9 誤答（1周目）", "根拠箇所→理由→自分の言葉で再回答"]]},
+  "2026-11-11": {note: "本番①の失点を4分類", items: [
+    ["hb", 90, 1, "B1本番90分①", "2大問・途中で解答を見ない"],
+    ["aw", 60, 1, "本番① 答え合わせ・原因分析", "要求読違い／根拠見落とし／表現ズレ／時間不足"],
+    ["kk", 30, 1, "B2骨子①", "過去問の問題要求→ア/イ/ウ割当"],
+    ["mk", 40, 2, "未見過去問 2問", ""],
+    ["gt", 30, 3, "演習1〜3 誤答（2周目）", ""]]},
+  "2026-11-12": {note: "ITEC論文1を書き切る", items: [
+    ["jk", 60, 1, "B1じっくり④", "未実施・重要問題"],
+    ["mk", 40, 2, "未見過去問 2問", ""],
+    ["gt", 30, 3, "演習4〜6 誤答（2周目）", ""],
+    ["fl", 120, 1, "ITEC論文1本目 執筆", "骨子込み120分で最後まで", {sub: "itec1"}]]},
+  "2026-11-13": {note: "ITEC論文1を提出", items: [
+    ["gt", 30, 3, "演習7〜9 誤答（2周目）", "これで演習1〜9が2周"],
+    ["jk", 60, 1, "B1じっくり⑤", ""],
+    ["jk", 60, 1, "B1じっくり⑥", ""],
+    ["ot", 30, 0, "ITEC論文1 見直し", ""],
+    ["sb", 15, 1, "ITEC論文1 提出", "提出管理に自動反映", {subs: ["itec1"]}],
+    ["mk", 40, 2, "未見過去問 2問", ""],
+    ["kk", 30, 1, "B2骨子②", ""]]},
+  "2026-11-14": {note: "土曜：最大90分・家族時間優先。答え合わせは明日", items: [
+    ["hb", 90, 1, "B1本番90分②", "2大問・途中で解答を見ない"]]},
+  "2026-11-15": {note: "日曜：最大90分・家族時間優先", items: [
+    ["aw", 60, 1, "本番② 答え合わせ・原因分析", "失点4分類"],
+    ["kk", 30, 1, "B2骨子③", ""]]},
+  "2026-11-16": {note: "ITEC論文2を書き切る", items: [
+    ["mk", 60, 3, "未見過去問 3問", ""],
+    ["gt", 30, 3, "じっくり①〜⑥の誤答", ""],
+    ["jk", 60, 1, "B1じっくり⑦", ""],
+    ["fl", 120, 1, "ITEC論文2本目 執筆", "骨子込み120分で最後まで", {sub: "itec2"}]]},
+  "2026-11-17": {note: "ITEC論文2を提出", items: [
+    ["gt", 50, 5, "本番①②の誤答", ""],
+    ["jk", 60, 1, "B1じっくり⑧", ""],
+    ["ot", 45, 0, "ITEC論文2 見直し", ""],
+    ["sb", 15, 1, "ITEC論文2 提出", "提出管理に自動反映", {subs: ["itec2"]}],
+    ["kk", 30, 1, "B2骨子④", ""],
+    ["mk", 40, 2, "未見過去問 2問", ""]]},
+  "2026-11-18": {note: "本番③の失点を4分類", items: [
+    ["hb", 90, 1, "B1本番90分③", "2大問・途中で解答を見ない"],
+    ["aw", 60, 1, "本番③ 答え合わせ・原因分析", "失点4分類"],
+    ["kk", 30, 1, "B2骨子⑤", ""],
+    ["gt", 40, 4, "演習の再誤答（3周目・残りのみ）", ""],
+    ["mk", 20, 1, "未見過去問 1問", ""]]},
+  "2026-11-19": {note: "弱点潰し＋骨子込み120分完走の確認", items: [
+    ["mk", 60, 3, "未見過去問 3問", ""],
+    ["gt", 30, 3, "じっくり⑦⑧・本番③の誤答", ""],
+    ["kk", 60, 2, "B2骨子⑥⑦", "骨子10〜15分を意識"],
+    ["ot", 90, 0, "B1弱点復習", "本番①〜③の失点パターン潰し"]]},
+  "2026-11-20": {note: "TAC全国模試＝本番シミュレーション（紙答案・A-1/A-2はやらない）", items: [
+    ["hb", 90, 1, "TAC全国模試 B-1（本番90分④）", "紙答案・途中で解答を見ない", {sub: "mockB1"}],
+    ["fl", 120, 1, "TAC全国模試 B-2（フル論文④）", "紙答案・120分", {sub: "mockB2"}],
+    ["aw", 60, 1, "模試B1 答え合わせ・原因分析", "失点4分類"],
+    ["sb", 30, 2, "TAC全国模試 答案提出（B1・B2）", "提出管理に自動反映", {subs: ["mockB1", "mockB2"]}]]},
+  "2026-11-21": {note: "土曜：最大90分。新しい問題に手を出さない", items: [
+    ["gt", 40, 4, "B1間違い問題（本番③・模試）", "本番で再発しそうなものだけ"],
+    ["ot", 50, 0, "再発しそうな弱点だけ復習", ""]]},
+  "2026-11-22": {note: "日曜：最大90分・早めに終了。新しい問題には手を出さない", items: [
+    ["ot", 20, 0, "B1典型ミス確認", "失点4分類メモを見る"],
+    ["kk", 30, 1, "B2固定骨子を白紙から再現", ""],
+    ["ot", 25, 0, "ア・イ・ウの展開確認", "早めに終了して休む"]]},
+  "2026-11-23": {note: "★本番当日★ 試験時間は受験票で必ず確認", items: []}
+};
+const EXAM_EVENTS = [
+  ["07:30", "08:00", "最終確認：B1は設問要求→本文根拠→解答へ変換／B2は骨子10〜15分"],
+  ["12:30", "14:00", "科目B-1（目安・受験票で確認）"],
+  ["14:30", "16:30", "科目B-2（目安・受験票で確認）"]
+];
+
+/* ================= 日付・時刻ユーティリティ ================= */
 const pad = n => String(n).padStart(2, "0");
-const now = new Date();
-const todayISO = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-const dayMs = 86400000;
-const toDate = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
-const md = s => { const d = toDate(s); return `${d.getMonth()+1}/${d.getDate()}`; };
+const params = new URLSearchParams(location.search);
+function now() {  // ?now=2026-11-23T10:00 でテスト用に時刻を固定可能
+  const o = params.get("now");
+  return o ? new Date(o) : new Date();
+}
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const toD = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = toD(s); d.setDate(d.getDate() + n); return iso(d); };
 const DOW = "日月火水木金土";
-const dow = s => DOW[toDate(s).getDay()];
-const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const P = D.params, T = Object.fromEntries(D.tasks.map(t => [t.key, t]));
-const N = D.dates.length;
-const sum = a => a.reduce((x, y) => x + (y || 0), 0);
-const pct = x => (x == null ? "-" : Math.round(x * 100) + "%");
-
-// submission actuals derived from submit dates (same rule as Excel)
-T.sb.act = D.dates.map(d => D.subs.filter(s => s.submitted === d).length);
-const planMin = D.dates.map((_, i) => sum(D.tasks.map(t => t.std * (t.plan[i] || 0))));
-const actW = D.dates.map((_, i) => sum(D.tasks.map(t => t.std * ((t.act && t.act[i]) || 0))));
-const hasCnt = i => D.tasks.some(t => t.key !== "sb" && t.act && t.act[i] != null);
-const kind = d => d === D.exam ? "本番" : ([0,6].includes(toDate(d).getDay()) ? "休日" : "平日");
-const b1 = (arr, i) => (T.jk[arr][i]||0) + (T.gt[arr][i]||0) + (T.mk[arr][i]||0) + (T.hb[arr][i]||0) * P.set;
-
-function judge(i) {
-  const d = D.dates[i];
-  if (kind(d) === "本番") return "本番";
-  const tr = planMin[i] && D.actMin[i] != null ? D.actMin[i] / planMin[i] : null;
-  const qr = planMin[i] && hasCnt(i) ? actW[i] / planMin[i] : null;
-  const sc = tr == null ? qr : qr == null ? tr : Math.min(tr, qr);
-  if (sc == null) return planMin[i] > 0 && d < todayISO ? "×" : "";
-  return sc >= P.th1 ? "◎" : sc >= P.th2 ? "○" : sc >= P.th3 ? "△" : "×";
-}
-const jcls = j => j === "◎" || j === "○" ? "ok" : j === "△" ? "warn" : j === "×" ? "bad" : "";
-
-const totalPlan = sum(planMin), totalAct = sum(D.actMin);
-const daysLeft = Math.max(0, Math.round((toDate(D.exam) - toDate(todayISO)) / dayMs));
-const planToYesterday = sum(planMin.filter((_, i) => D.dates[i] < todayISO));
-const diff = totalAct - planToYesterday;
-const rem = k => Math.max(0, T[k].target - sum(T[k].act));
-const unsubmitted = D.subs.filter(s => !["提出済み","返却済み"].includes(s.status)).length;
-const ti = D.dates.indexOf(todayISO);
-
-let h = `<h1>ITストラテジスト 科目B 必勝カウントダウン</h1><div class="sub">科目A合格済 → 科目Bだけに集中／本番 ${md(D.exam)}(${dow(D.exam)})</div>`;
-h += `<div class="card"><div class="hero"><span>本番まであと</span><span class="days">${daysLeft}</span><span>日</span></div>
-<div class="grid" style="margin-top:12px">
-${[["残りB1じっくり", rem("jk")+"問"], ["残りB1高速", (rem("gt")+rem("mk"))+"問"], ["残り本番90分", rem("hb")+"セット"],
-   ["残りB2骨子", rem("kk")+"問"], ["残りB2論文", rem("fl")+"本"], ["未提出答案", unsubmitted+"通"],
-   ["目標時間", (totalPlan/60).toFixed(1)+"h"], ["累計実績", (totalAct/60).toFixed(1)+"h"], ["目標達成率", pct(totalPlan ? totalAct/totalPlan : 0)],
-   ["残り必要時間", (Math.max(0,totalPlan-totalAct)/60).toFixed(1)+"h"], ["予定との差", (diff>=0?"+":"")+diff+"分"], ["B1累計問題数", sum(D.dates.map((_,i)=>hasCnt(i)?b1("act",i):0))+"問"]]
-  .map(([a,b]) => `<div class="kpi"><span>${a}</span><b class="${a==="予定との差"&&diff<0?"bad":""}">${b}</b></div>`).join("")}
-</div></div>`;
-
-if (ti >= 0) {
-  const j = judge(ti);
-  h += `<div class="card"><h2>▶ 今日やること ${md(todayISO)}(${dow(todayISO)})・${kind(todayISO)}</h2>
-  <div class="flow">${esc(D.flow[ti])}</div><div class="chips">
-  <span class="chip">予定 <b>${planMin[ti]}分</b></span><span class="chip">実績 <b>${D.actMin[ti] ?? "未入力"}${D.actMin[ti]!=null?"分":""}</b></span>
-  ${D.tasks.filter(t => t.plan[ti]).map(t => `<span class="chip">${esc(t.label.split("（")[0])} <b>${t.plan[ti]}${esc(t.unit)}</b>${t.act && t.act[ti]!=null ? "（済"+t.act[ti]+"）" : ""}</span>`).join("")}
-  ${j ? `<span class="chip j ${jcls(j)}">判定 ${j}</span>` : ""}</div></div>`;
-} else {
-  h += `<div class="card"><h2>計画期間外</h2><div class="sub">期間：${md(D.dates[0])}〜${md(D.dates[N-1])}</div></div>`;
+const md = s => { const d = toD(s); return `${d.getMonth() + 1}/${d.getDate()}(${DOW[d.getDay()]})`; };
+const hm = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+const toMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+const hmJ = m => { m = Math.round(m); const h = Math.floor(m / 60), r = m % 60; return h ? `${h}時間${r ? r + "分" : ""}` : `${r}分`; };
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const DATES = Object.keys(PLAN).sort();
+const STUDY_DATES = DATES.filter(d => d !== EXAM);
+function kind(d) {
+  if (d === EXAM) return "本番";
+  const w = toD(d).getDay();
+  return (w === 0 || w === 6 || HOLIDAYS.includes(d)) ? "休日" : "平日";
 }
 
-h += `<div class="card"><h2>タスク別 進捗（目標／実績／残り）</h2>${D.tasks.filter(t=>t.key!=="ot").map(t => {
-  const a = sum(t.act), r = Math.max(0, t.target - a), p = t.target ? Math.min(1, a / t.target) : 0;
-  return `<div class="row"><span>${esc(t.label.split("（")[0])} <span class="sub">最低${t.min}／目標${t.target}${esc(t.unit)}</span></span>
-  <span><b>${a}</b> / ${t.target}　残り<b class="${r?"bad":"ok"}">${r}</b>　${pct(t.target ? a/t.target : 0)}</span><div class="bar"><i style="width:${p*100}%"></i></div></div>`;
-}).join("")}</div>`;
+/* ================= 時刻割付（計画内容は変えず、時間帯だけ自動配置） ================= */
+const DAY = {};
+for (const d of DATES) {
+  const k = kind(d), w = toD(d).getDay();
+  let cur = k === "休日" ? toMin("06:00") : toMin("09:00");
+  const tasks = PLAN[d].items.map((it, i) => {
+    const [type, min, cnt, title, unit, opt] = it;
+    if (k === "平日" && cur < 780 && cur + min > 720) cur = 780;   // 12:00〜13:00 昼休み
+    const t = {id: `${d}#${i}`, date: d, type, min, cnt, title, unit, opt: opt || {}, start: cur, end: cur + min};
+    cur += min + 10;
+    return t;
+  });
+  const events = [];
+  if (k === "平日" && d !== EXAM) events.push({start: null, label: "午後に眠い場合：英語20〜30分で気分転換（ST時間には数えない）"});
+  if (w === 2 && d !== EXAM) events.push({start: toMin("19:30"), end: toMin("21:00"), label: "Tomo Future 会議（19:30〜・最低限の準備のみ）"});
+  if (w === 3 && d !== EXAM) events.push({start: toMin("19:00"), end: toMin("20:30"), label: "Tomo Future 会議（19:00〜・最低限の準備のみ）"});
+  if (d === EXAM) EXAM_EVENTS.forEach(e => events.push({start: toMin(e[0]), end: toMin(e[1]), label: e[2], exam: true}));
+  DAY[d] = {tasks, events, plan: tasks.reduce((s, t) => s + t.min, 0)};
+}
+const ALL_TASKS = DATES.flatMap(d => DAY[d].tasks);
+const TASK = Object.fromEntries(ALL_TASKS.map(t => [t.id, t]));
+const TOTAL_PLAN = STUDY_DATES.reduce((s, d) => s + DAY[d].plan, 0);
 
-h += `<div class="card"><h2>日別 予定と実績</h2><div class="scroll"><table><thead><tr><th>日付</th><th>区分</th><th>予定分</th><th>実績分</th><th>達成率</th><th>B1予定</th><th>B1実績</th><th>判定</th><th>累計予定</th><th>累計実績</th></tr></thead><tbody>`;
-let cp = 0, ca = 0;
-D.dates.forEach((d, i) => {
-  cp += planMin[i]; ca += D.actMin[i] || 0;
-  const j = judge(i), past = d <= todayISO;
-  const k = kind(d), chk = k === "休日" && planMin[i] > P.cap ? " ⚠" : "";
-  h += `<tr class="${d===todayISO?"today":""}"><td>${md(d)}(${dow(d)})</td><td>${k}${chk}</td><td>${planMin[i]}</td><td>${D.actMin[i] ?? ""}</td>
-  <td>${planMin[i] && D.actMin[i]!=null ? pct(D.actMin[i]/planMin[i]) : ""}</td><td>${b1("plan",i)}</td><td>${hasCnt(i)?b1("act",i):""}</td>
-  <td class="j ${jcls(j)}">${j}</td><td>${cp}</td><td>${past?ca:""}</td></tr>`;
+/* ================= 保存データ（localStorage） ================= */
+const KEY = "stB-dashboard-v1";
+function blank() {
+  return {tasks: {}, subs: Object.fromEntries(SUBS.map(s => [s.id, {status: s.init, submitted: "", returned: "", memo: s.memo}])), dayMemo: {}};
+}
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)) || blank(); } catch (e) { S = blank(); }
+S.tasks ||= {}; S.dayMemo ||= {}; S.subs ||= blank().subs;
+for (const s of SUBS) S.subs[s.id] ||= {status: s.init, submitted: "", returned: "", memo: s.memo};
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const st = id => (S.tasks[id] ||= {});
+
+/* ================= 集計 ================= */
+const isDone = id => !!(S.tasks[id] && S.tasks[id].done);
+const actMin = t => isDone(t.id) ? Number(S.tasks[t.id].actMin ?? t.min) || 0 : 0;
+const actCnt = t => isDone(t.id) ? Number(S.tasks[t.id].actCnt ?? t.cnt) || 0 : 0;
+function dayStats(d) {
+  const ts = DAY[d].tasks;
+  const doneT = ts.filter(t => isDone(t.id));
+  const plan = DAY[d].plan;
+  const donePlan = doneT.reduce((s, t) => s + t.min, 0);
+  const act = doneT.reduce((s, t) => s + actMin(t), 0);
+  const b1p = ts.reduce((s, t) => s + b1q(t.type, t.cnt), 0);
+  const b1a = doneT.reduce((s, t) => s + b1q(t.type, actCnt(t)), 0);
+  return {plan, donePlan, act, n: ts.length, nd: doneT.length, rate: plan ? donePlan / plan : 0, b1p, b1a,
+    kkP: sumType(ts, "kk", "cnt"), kkA: doneT.filter(t => t.type === "kk").reduce((s, t) => s + actCnt(t), 0),
+    flP: sumType(ts, "fl", "cnt"), flA: doneT.filter(t => t.type === "fl").reduce((s, t) => s + actCnt(t), 0)};
+}
+function b1q(type, c) { return type === "hb" ? c * SET_Q : (["jk", "gt", "mk"].includes(type) ? c : 0); }
+function sumType(ts, type, f) { return ts.filter(t => t.type === type).reduce((s, t) => s + t[f], 0); }
+function typeTotals() {
+  const r = {};
+  for (const k of Object.keys(TARGETS)) r[k] = 0;
+  for (const t of ALL_TASKS) if (isDone(t.id) && t.type in r && t.type !== "sb") r[t.type] += actCnt(t);
+  // 答案提出は提出管理（1答案＝1回）だけを正とし、二重計上しない
+  r.sb = SUBS.filter(s => ["提出済み", "返却済み"].includes(S.subs[s.id].status)).length;
+  return r;
+}
+const totalAct = () => ALL_TASKS.reduce((s, t) => s + actMin(t), 0);
+function streak(today) {
+  const ach = d => DAY[d] && DAY[d].plan > 0 && dayStats(d).rate >= STREAK_TH;
+  let d = ach(today) ? today : addDays(today, -1), n = 0;
+  while (DAY[d] && d !== EXAM && ach(d)) { n++; d = addDays(d, -1); }
+  return n;
+}
+const STAGES = [
+  {n: "Stage 1", name: "基礎固め", from: "2026-11-09", to: "2026-11-12", sub: "じっくり＋TAC/ITEC論文"},
+  {n: "Stage 2", name: "高速演習", from: "2026-11-13", to: "2026-11-17", sub: "誤答2周＋未見で型を広げる"},
+  {n: "Stage 3", name: "本番演習", from: "2026-11-18", to: "2026-11-20", sub: "本番③＋TAC全国模試"},
+  {n: "Stage 4", name: "最終調整", from: "2026-11-21", to: "2026-11-22", sub: "新しいことはしない"},
+  {n: "FINAL", name: "11/23 科目B本番", from: EXAM, to: EXAM, sub: "120分で完走"}
+];
+
+/* ================= 操作 ================= */
+function syncSubsOnDone(t, done) {
+  const o = t.opt;
+  if (o.subs) for (const id of o.subs) {
+    const s = S.subs[id];
+    if (done) { s.status = "提出済み"; s.submitted ||= t.date; }
+    else if (s.status === "提出済み") { s.status = "完成"; s.submitted = ""; }
+  }
+  if (o.sub) {
+    const s = S.subs[o.sub];
+    if (done && ["未着手", "作成中"].includes(s.status)) s.status = "完成";
+    if (!done && s.status === "完成") s.status = "作成中";
+  }
+}
+function startTask(id) {
+  const x = st(id);
+  for (const k in S.tasks) if (k !== id && S.tasks[k].running) S.tasks[k].running = false;
+  x.running = true; x.startedAt = now().getTime();
+  save(); render();
+}
+function completeTask(id) {
+  const t = TASK[id], x = st(id);
+  if (x.done) return;
+  let m = t.min;
+  if (x.running && x.startedAt) { const el = Math.round((now().getTime() - x.startedAt) / 60000); if (el >= 5) m = el; }
+  x.done = true; x.running = false; x.actMin = m; x.actCnt = t.cnt; x.doneAt = now().getTime();
+  syncSubsOnDone(t, true);
+  save(); render();
+  const s = dayStats(t.date);
+  toast(s.nd === s.n ? `✓ 完了！<br>今日の必勝ノルマ達成！` : `✓ 完了！<br>${t.date === today() ? "今日" : md(t.date)} ${s.nd} / ${s.n} タスク達成`);
+}
+function undoTask(id) {
+  const x = st(id);
+  x.done = false; delete x.actMin; delete x.actCnt; delete x.doneAt; x.running = false;
+  syncSubsOnDone(TASK[id], false);
+  save(); render();
+}
+let toastTimer;
+function toast(html) {
+  const el = document.getElementById("toast");
+  el.innerHTML = html; el.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
+/* ================= 描画 ================= */
+let viewDate = null;
+const today = () => iso(now());
+const nowMin = () => { const n = now(); return n.getHours() * 60 + n.getMinutes(); };
+function tagOf(type) {
+  const g = TYPES[type].grp;
+  return `<span class="tag t-${g === "b1" ? "b1" : g === "b2" ? "b2" : g === "ot" ? "ot" : "ev"}">${g === "b1" ? "B1" : g === "b2" ? "B2" : "共通"}・${esc(TYPES[type].name)}</span>`;
+}
+function qty(t) { return t.type === "ot" ? `${t.min}分` : `${t.cnt}${TYPES[t.type].unit}・${t.min}分`; }
+function elapsed(x) { const s = Math.max(0, Math.floor((now().getTime() - x.startedAt) / 1000)); return `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`; }
+
+function secCountdown(td) {
+  const days = Math.round((toD(EXAM) - toD(td)) / 86400000);
+  const cur = STAGES.findIndex(s => td >= s.from && td <= s.to);
+  const sk = streak(td);
+  let big, lbl;
+  if (days > 0) { lbl = "ITストラテジスト科目B　本番まであと"; big = `${days}<span style="font-size:24px">日</span>`; }
+  else if (days === 0) { lbl = "ITストラテジスト科目B"; big = "本番当日"; }
+  else { lbl = "ITストラテジスト科目B"; big = "試験終了"; }
+  return `<section class="card count" id="sec-count"><div><div class="lbl">${lbl}</div><div class="big" id="cd">${big}</div></div>
+  <div class="spacer"></div><div class="streak" id="streak">${td > EXAM ? "お疲れさまでした" : sk > 0 ? `🔥 ${sk}日連続達成` : "今日80%以上で連続記録スタート"}</div>
+  <div class="stages" style="flex-basis:100%">${STAGES.map((s, i) => `<div class="stage ${i === cur ? "cur" : ""} ${cur > i || td > s.to ? "past" : ""} ${s.n === "FINAL" ? "final" : ""}">
+   <b>${s.n}${i === cur ? "（現在）" : cur > i || td > s.to ? "（済）" : ""}</b>${esc(s.name)}<br><span>${md(s.from).replace(/\(.\)/, "")}${s.from !== s.to ? "〜" + md(s.to).replace(/\(.\)/, "") : ""}</span></div>`).join("")}</div></section>`;
+}
+
+function nextTaskOf(td) {
+  if (!DAY[td]) return null;
+  const ts = DAY[td].tasks.filter(t => !isDone(t.id));
+  return ts.find(t => st(t.id).running) || ts[0] || null;
+}
+function secNext(td) {
+  let h = `<section class="card next" id="sec-next"><h2>▶ 次にやること</h2>`;
+  if (td === EXAM) {
+    h += `<div class="title">本番当日</div><div class="unit">B1：設問要求→本文根拠→解答へ変換／B2：骨子10〜15分→ア・イ・ウ割当→問題固有条件→120分で完走</div>
+    ${EXAM_EVENTS.map(e => `<div class="meta">${e[0]}〜${e[1]}　${esc(e[2])}</div>`).join("")}`;
+    return h + `</section>`;
+  }
+  if (!DAY[td]) {
+    const first = td < DATES[0] ? DATES[0] : null;
+    return h + `<div class="title">${first ? "計画開始前" : "計画期間外"}</div><div class="unit">${first ? md(first) + "から開始" : ""}</div></section>`;
+  }
+  const t = nextTaskOf(td);
+  if (!t) {
+    const nd = addDays(td, 1), nt = DAY[nd] && DAY[nd].tasks[0];
+    return h + `<div class="achieved-msg">今日の必勝ノルマ達成！</div><div class="unit" style="margin-top:8px">${nt ? `明日 ${md(nd)} 最初：${hm(nt.start)}〜 ${esc(nt.title)}（${qty(nt)}）` : nd === EXAM ? "明日は本番。早めに休む" : ""}</div></section>`;
+  }
+  const x = st(t.id), nm = nowMin();
+  h += `<div class="time">${hm(t.start)}〜${hm(t.end)}</div>${tagOf(t.type)}
+  <div class="title">${esc(x.name || t.title)}</div><div class="unit">${esc(t.unit || TYPES[t.type].desc)}</div>
+  <div class="meta">予定 <b>${t.min}分</b>${t.type !== "ot" ? `・${t.cnt}${TYPES[t.type].unit}` : ""}</div>`;
+  if (x.running) h += `<div class="alert ok">学習中　<span class="running" id="elapsed" data-id="${t.id}">${elapsed(x)}</span>　（開始 ${new Date(x.startedAt).getHours()}:${pad(new Date(x.startedAt).getMinutes())}）</div>`;
+  else if (nm > t.end) h += `<div class="alert warn">⚠ 予定より遅れています（終了予定 ${hm(t.end)}）</div>`;
+  else if (nm >= t.start) h += `<div class="alert info">▶ 開始時刻です</div>`;
+  h += `<div class="btns">${x.running ? "" : `<button class="primary" data-act="start" data-id="${t.id}">開始する</button>`}
+  <button class="done" data-act="done" data-id="${t.id}">✓ 完了</button></div></section>`;
+  return h;
+}
+
+function ring(p) {
+  const r = 62, c = 2 * Math.PI * r, v = Math.min(1, p);
+  return `<svg class="ring" viewBox="0 0 150 150" role="img" aria-label="今日の達成率 ${Math.round(p * 100)}%">
+  <circle cx="75" cy="75" r="${r}" fill="none" stroke="var(--line)" stroke-width="14"/>
+  ${v > 0 ? "" : "<!--"}<circle cx="75" cy="75" r="${r}" fill="none" stroke="${p >= 1 ? "var(--ok)" : "var(--navy)"}" stroke-width="14" stroke-linecap="round"
+   stroke-dasharray="${c * v} ${c}" transform="rotate(-90 75 75)" style="transition:stroke-dasharray .3s"/>${v > 0 ? "" : "-->"}
+  <text x="75" y="84" text-anchor="middle" font-size="32" font-weight="800" fill="var(--ink)">${Math.round(p * 100)}%</text></svg>`;
+}
+function secAch(td) {
+  if (!DAY[td] || td === EXAM) return "";
+  const s = dayStats(td), full = s.n > 0 && s.nd === s.n;
+  return `<section class="card ${full ? "achieved" : ""}" id="sec-ach"><h2>今日の達成度</h2><div class="ach">${ring(s.rate)}
+  <div class="txt"><div class="pctline" id="achTxt">${s.nd} / ${s.n} タスク完了</div>
+  <div class="sub">予定 ${s.plan}分のうち ${s.donePlan}分ぶん完了（達成率は予定時間ベース）</div>
+  <div class="bar" style="margin-top:10px"><i style="width:${Math.min(100, s.rate * 100)}%;background:${full ? "var(--ok)" : "var(--navy)"}"></i></div>
+  ${full ? `<div class="achieved-msg" style="margin-top:10px">✓ 今日の必勝ノルマ達成！</div>` : ""}</div></div></section>`;
+}
+
+function secNums(td) {
+  if (!DAY[td] || td === EXAM) return "";
+  const s = dayStats(td);
+  const box = (k, p, a, u) => `<div class="num"><div class="k">${k}</div><div class="v">${a} / ${p}${u}</div><div class="s">実績 / 予定　残り ${Math.max(0, p - a)}${u}</div></div>`;
+  const left = {};
+  for (const t of DAY[td].tasks.filter(t => !isDone(t.id))) {
+    const key = t.type === "fl" || t.type === "ot" ? t.type + "|" + t.title : t.type;
+    left[key] ||= {t, cnt: 0, min: 0}; left[key].cnt += t.cnt; left[key].min += t.min;
+  }
+  const items = Object.values(left).map(({t, cnt, min}) =>
+    t.type === "fl" ? `B2論文（${esc(t.title)}） ${min}分` : t.type === "ot" ? `${esc(t.title)} ${min}分` :
+    t.type === "sb" ? `${esc(t.title)}` : `${TYPES[t.type].name} ${cnt}${TYPES[t.type].unit}`);
+  return `<section class="card" id="sec-nums"><h2>今日の時間・問題数</h2><div class="nums">
+  ${box("学習時間", s.plan, s.act, "分")}${box("B1問題数（本番1セット=2大問）", s.b1p, s.b1a, "問")}${s.kkP ? box("B2骨子", s.kkP, s.kkA, "問") : ""}${s.flP ? box("B2フル論文", s.flP, s.flA, "本") : ""}</div>
+  <div class="left card" style="margin:12px 0 0;background:var(--hi);border:0"><b>今日あと</b>${items.length ? `<ul id="leftList">${items.map(i => `<li>${i}</li>`).join("")}</ul>` : `<div id="leftList" class="achieved-msg">残りなし！</div>`}</div></section>`;
+}
+
+function taskCard(t, td, nextId) {
+  const x = st(t.id), done = isDone(t.id), nm = nowMin();
+  const late = !done && t.date === td && nm > t.end;
+  const status = done ? `<span class="tag t-ok">✓ 完了</span>` : x.running ? `<span class="tag t-ok">学習中</span>` :
+    late ? `<span class="tag t-warn">⚠ 遅れ</span>` : (t.date < td ? `<span class="tag t-warn">未完了</span>` : "");
+  return `<div class="task ${done ? "isdone" : ""} ${t.id === nextId ? "isnext" : ""} ${late ? "late" : ""}" data-task="${t.id}">
+  <div class="tm">${hm(t.start)}<br>〜${hm(t.end)}</div>
+  <div><div class="row" style="gap:6px">${tagOf(t.type)}${status}</div>
+  <div class="tt">${esc(x.name || t.title)}</div><div class="sub">${esc(t.unit)}${t.unit ? "／" : ""}予定 ${qty(t)}</div>
+  <div class="ctl">${done
+    ? `<button data-act="undo" data-id="${t.id}">完了を取り消す</button>
+       <label>実績<input type="number" min="0" max="600" step="5" data-f="actMin" data-id="${t.id}" value="${actMin(t)}">分</label>
+       ${t.type !== "ot" ? `<label>実績<input type="number" min="0" max="50" step="1" data-f="actCnt" data-id="${t.id}" value="${actCnt(t)}">${TYPES[t.type].unit}</label>` : ""}`
+    : `${x.running ? "" : `<button data-act="start" data-id="${t.id}">開始</button>`}<button class="done" data-act="done" data-id="${t.id}">✓ 完了</button>`}</div>
+  <details><summary>問題名・メモ${x.memo ? "（あり）" : ""}</summary>
+   <div class="ctl"><label style="flex:1 1 100%">問題名<input style="flex:1" type="text" data-f="name" data-id="${t.id}" value="${esc(x.name || "")}" placeholder="${esc(t.title)}"></label>
+   <textarea data-f="memo" data-id="${t.id}" placeholder="失点分類（要求読違い／根拠見落とし／表現ズレ／時間不足）・気づき">${esc(x.memo || "")}</textarea></div></details>
+  </div></div>`;
+}
+function scheduleHTML(d, td) {
+  const day = DAY[d], nextId = d === td ? (nextTaskOf(td) || {}).id : null;
+  const rows = [...day.tasks.map(t => ({s: t.start, h: taskCard(t, td, nextId)})),
+    ...day.events.map(e => ({s: e.start ?? 9999, h: `<div class="task ev"><div class="tm">${e.start != null ? hm(e.start) + "<br>〜" + hm(e.end) : "随時"}</div>
+     <div><span class="tag ${e.exam ? "t-exam" : "t-ev"}">${e.exam ? "本番" : "予定（ST外）"}</span><div class="tt">${esc(e.label)}</div></div></div>`}))]
+    .sort((a, b) => a.s - b.s);
+  const k = kind(d);
+  return `<div class="notes"><b>${md(d)} ${k}</b>${k === "休日" ? `（最大${WEEKEND_CAP}分・家族時間優先）` : k === "平日" ? "（平日は学習量多め）" : ""}　予定 ${day.plan}分<br>${esc(PLAN[d].note)}</div>
+  ${rows.map(r => r.h).join("")}
+  <div style="margin-top:10px"><label class="sub">この日のメモ</label><textarea data-f="dayMemo" data-day="${d}" placeholder="気づき・反省・明日への申し送り">${esc(S.dayMemo[d] || "")}</textarea></div>`;
+}
+function secToday(td) {
+  if (!DAY[td]) return "";
+  return `<section class="card" id="sec-today"><h2>今日の時間順スケジュール</h2>${scheduleHTML(td, td)}</section>`;
+}
+
+function secProgress() {
+  const tot = typeTotals(), act = totalAct();
+  const rows = [["jk", "B1じっくり", "b1"], ["gt", "B1誤答高速", "b1"], ["mk", "B1未見高速", "b1"], ["hb", "B1本番90分", "b1"],
+                ["kk", "B2骨子", "b2"], ["fl", "B2フル論文", "b2"], ["sb", "答案提出", "b2"]];
+  const p = TOTAL_PLAN ? act / TOTAL_PLAN : 0;
+  return `<section class="card" id="sec-prog"><h2>B1・B2 全体進捗</h2>
+  <div class="cum"><div class="num"><div class="k">累計実績</div><div class="v" id="cumAct">${hmJ(act)}</div></div>
+  <div class="num"><div class="k">目標（11/9〜11/22）</div><div class="v">${hmJ(TOTAL_PLAN)}</div></div>
+  <div class="num"><div class="k">残り</div><div class="v" id="cumLeft">${hmJ(Math.max(0, TOTAL_PLAN - act))}</div></div></div>
+  <div class="pg"><div class="hd"><span class="nm">累計学習時間</span><span class="ct">${Math.round(p * 100)}%</span></div><div class="bar"><i style="width:${Math.min(100, p * 100)}%;background:var(--navy)"></i></div></div>
+  ${rows.map(([k, nm, g]) => {
+    const a = tot[k], tg = TARGETS[k].tgt, mn = TARGETS[k].min, r = Math.max(0, tg - a), pp = tg ? a / tg : 0, u = TYPES[k].unit;
+    return `<div class="pg" data-pg="${k}"><div class="hd"><span class="nm">${nm}</span><span class="ct"><span data-v>${a}</span> / ${tg}${u}</span>
+    <span class="sub">${Math.round(pp * 100)}%</span><span class="rm">${r ? `残り <b>${r}</b>${u}` : `<span class="tag t-ok">✓ 目標達成</span>`}${a < mn ? `<span class="sub">（最低${mn}）</span>` : ""}</span></div>
+    <div class="bar"><i style="width:${Math.min(100, pp * 100)}%;background:${pp >= 1 ? "var(--ok)" : g === "b1" ? "var(--b1)" : "var(--b2)"}"></i>
+    ${mn < tg ? `<span class="minmark" style="left:${mn / tg * 100}%" title="最低目標"></span>` : ""}</div></div>`;
+  }).join("")}
+  <div class="sub">縦線＝最低目標。TAC全国模試はB1本番90分④・B2フル論文④として1回ずつだけ数え、答案提出は提出管理の5通で数えます。</div></section>`;
+}
+
+function secChart(td) {
+  const ds = STUDY_DATES, W = 700, H = 280, L = 44, R = 8, T = 26, B = 40;
+  const data = ds.map(d => ({d, p: DAY[d].plan, a: dayStats(d).act}));
+  const max = Math.max(300, ...data.map(x => Math.max(x.p, x.a)));
+  const ymax = Math.ceil(max / 100) * 100, gw = (W - L - R) / ds.length, bw = gw * 0.34;
+  const y = v => T + (H - T - B) * (1 - v / ymax);
+  let g = "";
+  for (let v = 0; v <= ymax; v += 100) g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="var(--sub)">${v}</text>`;
+  data.forEach((x, i) => {
+    const gx = L + gw * i, isT = x.d === td, cx = gx + gw / 2;
+    if (isT) g += `<rect x="${gx + 1}" y="${T - 22}" width="${gw - 2}" height="${H - T - B + 22}" fill="var(--hi)" rx="4"/><text x="${cx}" y="${T - 8}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--exam)">今日</text>`;
+    g += `<rect x="${cx - bw - 1}" y="${y(x.p)}" width="${bw}" height="${y(0) - y(x.p)}" fill="var(--plan)" rx="2"/>`;
+    g += `<rect x="${cx + 1}" y="${y(x.a)}" width="${bw}" height="${Math.max(0, y(0) - y(x.a))}" fill="${x.p && x.a >= x.p ? "var(--ok)" : "var(--navy)"}" rx="2" data-bar="${x.d}"/>`;
+    const dd = toD(x.d);
+    g += `<text x="${cx}" y="${H - B + 16}" text-anchor="middle" font-size="12" fill="${isT ? "var(--exam)" : "var(--ink)"}" font-weight="${isT ? 700 : 400}">${dd.getMonth() + 1}/${dd.getDate()}</text>
+          <text x="${cx}" y="${H - B + 31}" text-anchor="middle" font-size="11" fill="var(--sub)">${DOW[dd.getDay()]}</text>`;
+    g += `<rect class="hit" x="${gx}" y="${T}" width="${gw}" height="${H - T}" fill="transparent" data-d="${x.d}" data-p="${x.p}" data-a="${x.a}"/>`;
+  });
+  return `<section class="card" id="sec-chart"><h2>日別 予定時間 vs 実績時間（分）</h2>
+  <div class="legend"><span><i style="background:var(--plan)"></i>予定</span><span><i style="background:var(--navy)"></i>実績</span><span><i style="background:var(--ok)"></i>実績（予定以上）</span><span>棒をタップで詳細</span></div>
+  <div class="chartwrap"><svg viewBox="0 0 ${W} ${H}" id="chart" role="img" aria-label="日別の予定と実績">${g}</svg><div class="tip" id="tip"></div></div></section>`;
+}
+
+function secSubs(td) {
+  return `<section class="card" id="sec-subs"><h2>提出物状況　<span class="sub">未提出 ${SUBS.filter(s => !["提出済み", "返却済み"].includes(S.subs[s.id].status)).length} / ${SUBS.length}</span></h2>
+  ${SUBS.map(s => {
+    const x = S.subs[s.id], done = ["提出済み", "返却済み"].includes(x.status), late = !done && s.due < td;
+    return `<div class="subrow" data-sub="${s.id}"><div><b>${esc(s.name)}</b><div class="sub">予定 ${md(s.due)}${x.memo ? "／" + esc(x.memo) : ""}</div></div>
+    <div>${done ? `<span class="tag t-ok">✓ ${esc(x.status)}</span>` : late ? `<span class="tag t-warn">⚠ 期限超過・${esc(x.status)}</span>` : `<span class="tag t-ev">${esc(x.status)}</span>`}</div>
+    <div class="ctl"><label>状態<select data-sf="status" data-id="${s.id}">${STATUSES.map(v => `<option ${v === x.status ? "selected" : ""}>${v}</option>`).join("")}</select></label>
+    <label>提出日<input type="date" data-sf="submitted" data-id="${s.id}" value="${x.submitted || ""}"></label>
+    <label>返却日<input type="date" data-sf="returned" data-id="${s.id}" value="${x.returned || ""}"></label>
+    <label style="flex:1 1 220px">メモ<input style="flex:1" type="text" data-sf="memo" data-id="${s.id}" value="${esc(x.memo || "")}"></label></div></div>`;
+  }).join("")}</section>`;
+}
+
+function secDays(td) {
+  if (!viewDate) viewDate = DAY[addDays(td, 1)] ? addDays(td, 1) : (DAY[td] ? td : DATES[0]);
+  const d = viewDate, i = DATES.indexOf(d);
+  let h = `<section class="card" id="sec-days"><h2>過去日・未来日のスケジュール</h2>
+  <div class="daynav"><button data-nav="-1" ${i <= 0 ? "disabled" : ""}>◀ 前日</button><button data-nav="0">今日</button><button data-nav="1" ${i >= DATES.length - 1 ? "disabled" : ""}>翌日 ▶</button>
+  <span class="cur">${md(d)}${d === td ? "（今日）" : ""}</span></div>
+  <div class="chips">${DATES.map(x => { const s = dayStats(x), full = s.n && s.nd === s.n;
+    return `<button data-go="${x}" class="${x === d ? "sel" : ""}">${md(x)}${x === EXAM ? " 本番" : full ? " ✓" : s.nd ? ` ${s.nd}/${s.n}` : ""}</button>`; }).join("")}</div>`;
+  if (d === EXAM) h += `<div class="notes"><b>${md(d)} 本番</b><br>${esc(PLAN[d].note)}</div>${EXAM_EVENTS.map(e => `<div class="task ev"><div class="tm">${e[0]}<br>〜${e[1]}</div><div><span class="tag t-exam">本番</span><div class="tt">${esc(e[2])}</div></div></div>`).join("")}`;
+  else h += scheduleHTML(d, td);
+  return h + `</section>`;
+}
+
+function render() {
+  const td = today();
+  const y = window.scrollY;
+  document.getElementById("app").innerHTML = secCountdown(td) + secNext(td) + secAch(td) + secNums(td) + secToday(td) + secProgress() + secChart(td) + secSubs(td) + secDays(td);
+  window.scrollTo(0, y);
+  lastDay = td;
+}
+let lastDay = null;
+
+/* ================= イベント ================= */
+const app = document.getElementById("app");
+app.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.act === "start") startTask(b.dataset.id);
+  else if (b.dataset.act === "done") completeTask(b.dataset.id);
+  else if (b.dataset.act === "undo") undoTask(b.dataset.id);
+  else if (b.dataset.nav != null) {
+    const n = Number(b.dataset.nav), td = today();
+    viewDate = n === 0 ? (DAY[td] ? td : DATES[0]) : DATES[Math.min(DATES.length - 1, Math.max(0, DATES.indexOf(viewDate) + n))];
+    render();
+  } else if (b.dataset.go) { viewDate = b.dataset.go; render(); }
 });
-h += `</tbody></table></div></div>`;
-
-h += `<div class="card"><h2>提出管理</h2>${D.subs.map(s => {
-  const done = ["提出済み","返却済み"].includes(s.status);
-  const late = !done && s.due && s.due < todayISO;
-  return `<div class="row"><span><b>${esc(s.name)}</b><br><span class="sub">予定 ${s.due?md(s.due):"-"}${s.submitted?"／提出 "+md(s.submitted):""}${s.returned?"／返却 "+md(s.returned):""}</span></span>
-  <span class="status ${done?"ok":late?"bad":""}">${esc(s.status)}${late?" ⚠期限超過":""}</span></div>`;
-}).join("")}</div>`;
-
-h += `<div class="card"><h2>全日程（時間配分）</h2>${D.dates.map((d,i)=>`<details ${d===todayISO?"open":""}><summary>${md(d)}(${dow(d)}) ${kind(d)}・予定${planMin[i]}分 ${judge(i)}</summary><div class="flow" style="margin:6px 0">${esc(D.flow[i])}</div></details>`).join("")}</div>`;
-
-$("#app").innerHTML = h;
-$("#foot").textContent = `データ更新：${D.generated}（Excelを保存後 ./publish.sh で反映）`;
+app.addEventListener("change", e => {
+  const el = e.target;
+  if (el.dataset.f === "dayMemo") { S.dayMemo[el.dataset.day] = el.value; save(); return; }
+  if (el.dataset.f) {
+    const x = st(el.dataset.id), f = el.dataset.f;
+    if (f === "actMin" || f === "actCnt") x[f] = Math.max(0, Number(el.value) || 0); else x[f] = el.value;
+    save(); if (f !== "memo") render(); return;
+  }
+  if (el.dataset.sf) {
+    const x = S.subs[el.dataset.id], f = el.dataset.sf;
+    x[f] = el.value;
+    if (f === "status" && ["提出済み", "返却済み"].includes(el.value) && !x.submitted) x.submitted = today();
+    if (f === "status" && !["提出済み", "返却済み"].includes(el.value)) { x.submitted = ""; x.returned = ""; }
+    save(); render();
+  }
+});
+function showTip(r, ev) {
+  const tip = document.getElementById("tip"), wrap = tip.parentElement;
+  const p = +r.dataset.p, a = +r.dataset.a;
+  tip.innerHTML = `<b>${md(r.dataset.d)}</b><br>予定：${p}分<br>実績：${a}分<br>達成率：${p ? Math.round(a / p * 100) : 0}%`;
+  tip.style.display = "block";
+  const wb = wrap.getBoundingClientRect(), rb = r.getBoundingClientRect();
+  let left = rb.left - wb.left + rb.width / 2 - tip.offsetWidth / 2;
+  left = Math.max(0, Math.min(wb.width - tip.offsetWidth, left));
+  tip.style.left = left + "px"; tip.style.top = "4px";
+}
+app.addEventListener("pointerover", e => { const r = e.target.closest("rect.hit"); if (r) showTip(r, e); });
+app.addEventListener("pointerout", e => { if (e.target.closest("rect.hit") && e.pointerType === "mouse") document.getElementById("tip").style.display = "none"; });
+app.addEventListener("click", e => { const r = e.target.closest("rect.hit"); if (r) showTip(r, e); });
+document.getElementById("exportBtn").onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 1)], {type: "application/json"}));
+  a.download = `st-dashboard-backup-${today()}.json`; a.click();
+};
+document.getElementById("importFile").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try { const d = JSON.parse(await f.text()); if (!d.tasks || !d.subs) throw 0; if (confirm("現在のデータを読み込んだデータで置き換えますか？")) { S = d; save(); render(); toast("読み込みました"); } }
+  catch (err) { alert("読み込めませんでした（バックアップJSONを選んでください）"); }
+  e.target.value = "";
+};
+// 経過時間の更新・日付変更時の自動更新
+setInterval(() => {
+  if (today() !== lastDay) { viewDate = null; render(); return; }
+  const el = document.getElementById("elapsed");
+  if (el) el.textContent = elapsed(st(el.dataset.id));
+}, 1000);
+setInterval(() => { if (!document.querySelector("input:focus,textarea:focus,select:focus")) render(); }, 60000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden && !document.querySelector("input:focus,textarea:focus")) render(); });
+render();
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
 </body>
 </html>
