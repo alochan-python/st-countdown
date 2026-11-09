@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>科目B 必勝カウントダウン</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#1d2430;--sub:#5d6675;--line:#e1e4ea;--navy:#1f4e78;--red:#c00000;--ok:#2e7d32;--warn:#b26a00;--bar:#1f4e78;--barbg:#e6ebf1;--hi:#fff4cc}
+@media (prefers-color-scheme:dark){:root{--bg:#12151a;--card:#1b2028;--ink:#e8ebf0;--sub:#9aa3b2;--line:#2c333e;--navy:#6ea8dc;--red:#ff6b6b;--ok:#6fcf73;--warn:#f0b04a;--bar:#6ea8dc;--barbg:#2a313c;--hi:#3a3420}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:18px;margin:0 0 4px}
+h2{font-size:15px;margin:0 0 10px;color:var(--navy)}
+.sub{color:var(--sub);font-size:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+.hero{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.days{font-size:56px;font-weight:800;color:var(--red);line-height:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.kpi{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.kpi b{display:block;font-size:22px}
+.kpi span{font-size:12px;color:var(--sub)}
+.flow{white-space:pre-wrap;font-size:15px;background:var(--hi);border-radius:8px;padding:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:13px}
+.row{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:10px 0}
+.bar{grid-column:1/-1;height:8px;background:var(--barbg);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--bar)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;font-size:13px;min-width:720px;width:100%}
+th,td{border-bottom:1px solid var(--line);padding:6px;text-align:center;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card)}
+tr.today td{background:var(--hi)}
+.j{font-weight:800;font-size:16px}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--red)}
+.status{font-weight:700}
+footer{color:var(--sub);font-size:12px;text-align:center;margin:20px 0}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<footer id="foot"></footer>
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2, "0");
+const now = new Date();
+const todayISO = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const dayMs = 86400000;
+const toDate = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const md = s => { const d = toDate(s); return `${d.getMonth()+1}/${d.getDate()}`; };
+const DOW = "日月火水木金土";
+const dow = s => DOW[toDate(s).getDay()];
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const P = D.params, T = Object.fromEntries(D.tasks.map(t => [t.key, t]));
+const N = D.dates.length;
+const sum = a => a.reduce((x, y) => x + (y || 0), 0);
+const pct = x => (x == null ? "-" : Math.round(x * 100) + "%");
+
+// submission actuals derived from submit dates (same rule as Excel)
+T.sb.act = D.dates.map(d => D.subs.filter(s => s.submitted === d).length);
+const planMin = D.dates.map((_, i) => sum(D.tasks.map(t => t.std * (t.plan[i] || 0))));
+const actW = D.dates.map((_, i) => sum(D.tasks.map(t => t.std * ((t.act && t.act[i]) || 0))));
+const hasCnt = i => D.tasks.some(t => t.key !== "sb" && t.act && t.act[i] != null);
+const kind = d => d === D.exam ? "本番" : ([0,6].includes(toDate(d).getDay()) ? "休日" : "平日");
+const b1 = (arr, i) => (T.jk[arr][i]||0) + (T.gt[arr][i]||0) + (T.mk[arr][i]||0) + (T.hb[arr][i]||0) * P.set;
+
+function judge(i) {
+  const d = D.dates[i];
+  if (kind(d) === "本番") return "本番";
+  const tr = planMin[i] && D.actMin[i] != null ? D.actMin[i] / planMin[i] : null;
+  const qr = planMin[i] && hasCnt(i) ? actW[i] / planMin[i] : null;
+  const sc = tr == null ? qr : qr == null ? tr : Math.min(tr, qr);
+  if (sc == null) return planMin[i] > 0 && d < todayISO ? "×" : "";
+  return sc >= P.th1 ? "◎" : sc >= P.th2 ? "○" : sc >= P.th3 ? "△" : "×";
+}
+const jcls = j => j === "◎" || j === "○" ? "ok" : j === "△" ? "warn" : j === "×" ? "bad" : "";
+
+const totalPlan = sum(planMin), totalAct = sum(D.actMin);
+const daysLeft = Math.max(0, Math.round((toDate(D.exam) - toDate(todayISO)) / dayMs));
+const planToYesterday = sum(planMin.filter((_, i) => D.dates[i] < todayISO));
+const diff = totalAct - planToYesterday;
+const rem = k => Math.max(0, T[k].target - sum(T[k].act));
+const unsubmitted = D.subs.filter(s => !["提出済み","返却済み"].includes(s.status)).length;
+const ti = D.dates.indexOf(todayISO);
+
+let h = `<h1>ITストラテジスト 科目B 必勝カウントダウン</h1><div class="sub">科目A合格済 → 科目Bだけに集中／本番 ${md(D.exam)}(${dow(D.exam)})</div>`;
+h += `<div class="card"><div class="hero"><span>本番まであと</span><span class="days">${daysLeft}</span><span>日</span></div>
+<div class="grid" style="margin-top:12px">
+${[["残りB1じっくり", rem("jk")+"問"], ["残りB1高速", (rem("gt")+rem("mk"))+"問"], ["残り本番90分", rem("hb")+"セット"],
+   ["残りB2骨子", rem("kk")+"問"], ["残りB2論文", rem("fl")+"本"], ["未提出答案", unsubmitted+"通"],
+   ["目標時間", (totalPlan/60).toFixed(1)+"h"], ["累計実績", (totalAct/60).toFixed(1)+"h"], ["目標達成率", pct(totalPlan ? totalAct/totalPlan : 0)],
+   ["残り必要時間", (Math.max(0,totalPlan-totalAct)/60).toFixed(1)+"h"], ["予定との差", (diff>=0?"+":"")+diff+"分"], ["B1累計問題数", sum(D.dates.map((_,i)=>hasCnt(i)?b1("act",i):0))+"問"]]
+  .map(([a,b]) => `<div class="kpi"><span>${a}</span><b class="${a==="予定との差"&&diff<0?"bad":""}">${b}</b></div>`).join("")}
+</div></div>`;
+
+if (ti >= 0) {
+  const j = judge(ti);
+  h += `<div class="card"><h2>▶ 今日やること ${md(todayISO)}(${dow(todayISO)})・${kind(todayISO)}</h2>
+  <div class="flow">${esc(D.flow[ti])}</div><div class="chips">
+  <span class="chip">予定 <b>${planMin[ti]}分</b></span><span class="chip">実績 <b>${D.actMin[ti] ?? "未入力"}${D.actMin[ti]!=null?"分":""}</b></span>
+  ${D.tasks.filter(t => t.plan[ti]).map(t => `<span class="chip">${esc(t.label.split("（")[0])} <b>${t.plan[ti]}${esc(t.unit)}</b>${t.act && t.act[ti]!=null ? "（済"+t.act[ti]+"）" : ""}</span>`).join("")}
+  ${j ? `<span class="chip j ${jcls(j)}">判定 ${j}</span>` : ""}</div></div>`;
+} else {
+  h += `<div class="card"><h2>計画期間外</h2><div class="sub">期間：${md(D.dates[0])}〜${md(D.dates[N-1])}</div></div>`;
+}
+
+h += `<div class="card"><h2>タスク別 進捗（目標／実績／残り）</h2>${D.tasks.filter(t=>t.key!=="ot").map(t => {
+  const a = sum(t.act), r = Math.max(0, t.target - a), p = t.target ? Math.min(1, a / t.target) : 0;
+  return `<div class="row"><span>${esc(t.label.split("（")[0])} <span class="sub">最低${t.min}／目標${t.target}${esc(t.unit)}</span></span>
+  <span><b>${a}</b> / ${t.target}　残り<b class="${r?"bad":"ok"}">${r}</b>　${pct(t.target ? a/t.target : 0)}</span><div class="bar"><i style="width:${p*100}%"></i></div></div>`;
+}).join("")}</div>`;
+
+h += `<div class="card"><h2>日別 予定と実績</h2><div class="scroll"><table><thead><tr><th>日付</th><th>区分</th><th>予定分</th><th>実績分</th><th>達成率</th><th>B1予定</th><th>B1実績</th><th>判定</th><th>累計予定</th><th>累計実績</th></tr></thead><tbody>`;
+let cp = 0, ca = 0;
+D.dates.forEach((d, i) => {
+  cp += planMin[i]; ca += D.actMin[i] || 0;
+  const j = judge(i), past = d <= todayISO;
+  const k = kind(d), chk = k === "休日" && planMin[i] > P.cap ? " ⚠" : "";
+  h += `<tr class="${d===todayISO?"today":""}"><td>${md(d)}(${dow(d)})</td><td>${k}${chk}</td><td>${planMin[i]}</td><td>${D.actMin[i] ?? ""}</td>
+  <td>${planMin[i] && D.actMin[i]!=null ? pct(D.actMin[i]/planMin[i]) : ""}</td><td>${b1("plan",i)}</td><td>${hasCnt(i)?b1("act",i):""}</td>
+  <td class="j ${jcls(j)}">${j}</td><td>${cp}</td><td>${past?ca:""}</td></tr>`;
+});
+h += `</tbody></table></div></div>`;
+
+h += `<div class="card"><h2>提出管理</h2>${D.subs.map(s => {
+  const done = ["提出済み","返却済み"].includes(s.status);
+  const late = !done && s.due && s.due < todayISO;
+  return `<div class="row"><span><b>${esc(s.name)}</b><br><span class="sub">予定 ${s.due?md(s.due):"-"}${s.submitted?"／提出 "+md(s.submitted):""}${s.returned?"／返却 "+md(s.returned):""}</span></span>
+  <span class="status ${done?"ok":late?"bad":""}">${esc(s.status)}${late?" ⚠期限超過":""}</span></div>`;
+}).join("")}</div>`;
+
+h += `<div class="card"><h2>全日程（時間配分）</h2>${D.dates.map((d,i)=>`<details ${d===todayISO?"open":""}><summary>${md(d)}(${dow(d)}) ${kind(d)}・予定${planMin[i]}分 ${judge(i)}</summary><div class="flow" style="margin:6px 0">${esc(D.flow[i])}</div></details>`).join("")}</div>`;
+
+$("#app").innerHTML = h;
+$("#foot").textContent = `データ更新：${D.generated}（Excelを保存後 ./publish.sh で反映）`;
+</script>
+</body>
+</html>
