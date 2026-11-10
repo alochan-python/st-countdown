@@ -111,6 +111,22 @@ h2{font-size:17px;margin:0 0 12px;color:var(--navy);display:flex;align-items:cen
 .pg .rm{margin-left:auto;font-size:15px}
 .pg .bar{height:18px;position:relative;margin-top:4px}
 .pg .minmark{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.45}
+.line{border-left:6px solid var(--navy)}
+.lineTop{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.lineTop .big{font-size:44px;font-weight:800;color:var(--navy);line-height:1}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-top:12px}
+.li{border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.li.ok{border-color:var(--ok)}.li.risk{border:2px solid var(--warn)}
+.li .nm{font-weight:700}.li .ct{font-size:24px;font-weight:800}
+.li .bar{position:relative;margin-top:6px}
+.li .minmark{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.45}
+.li .ctl{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.li .ctl button{min-height:40px;padding:6px 10px;font-size:14px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.toggles button{min-height:44px}
+.toggles button[aria-pressed=true]{background:var(--okl);color:var(--ok);border-color:var(--ok);font-weight:700}
+.risklist{margin:6px 0 0;padding-left:1.2em;font-weight:700}
+.lsub{border-top:1px solid var(--line);margin-top:14px;padding-top:10px}
 .cum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}
 
 /* ⑦ chart */
@@ -172,13 +188,13 @@ const TYPES = {
   mk: {name: "B1未見高速", grp: "b1", unit: "大問", desc: "15〜20分で自力→詰まったら解答確認→本文根拠と解答への変換方法を確認"},
   hb: {name: "B1本番90分", grp: "b1", unit: "セット", desc: "2大問90分。途中で模範解答を見ない"},
   aw: {name: "B1答え合わせ・原因分析", grp: "b1", unit: "回", desc: "設問要求読み違い／根拠見落とし／表現ズレ／時間不足に分類"},
-  kk: {name: "B2骨子", grp: "b2", unit: "問", desc: "骨子作成→ア・イ・ウへ割当→問題固有条件を追加"},
+  kk: {name: "B2骨子", grp: "b2", unit: "問", desc: "1問10〜15分：自力で3〜5分→必要なら補助→答えを隠してア・イ・ウを再現"},
   fl: {name: "B2フル論文", grp: "b2", unit: "本", desc: "固定論文を問題要求に合わせて変形。骨子込み120分で完走"},
   sb: {name: "答案提出", grp: "b2", unit: "通", desc: "提出管理と連動"},
   ot: {name: "仕上げ・弱点・確認", grp: "ot", unit: "分", desc: ""},
   ev: {name: "予定", grp: "ev", unit: "", desc: ""}
 };
-const TARGETS = {jk: {min: 6, tgt: 8}, gt: {min: 18, tgt: 36}, mk: {min: 10, tgt: 15}, hb: {min: 4, tgt: 4}, kk: {min: 6, tgt: 8}, fl: {min: 4, tgt: 4}, sb: {min: 5, tgt: 5}};
+const TARGETS = {jk: {min: 6, tgt: 8}, gt: {min: 18, tgt: 36}, mk: {min: 10, tgt: 15}, hb: {min: 4, tgt: 5}, kk: {min: 10, tgt: 15}, fl: {min: 4, tgt: 4}, sb: {min: 5, tgt: 5}};
 const SUBS = [
   {id: "tac2", name: "TAC論文2回目（添削）", due: "2026-11-10", init: "作成中", memo: "内容再検討済み→本文を書く。最優先"},
   {id: "itec1", name: "ITEC論文1本目（添削）", due: "2026-11-13", init: "未着手", memo: ""},
@@ -190,7 +206,7 @@ const STATUSES = ["未着手", "作成中", "完成", "提出済み", "返却済
 // [type, 予定分, 予定数, 問題名, 単元・やり方, {sub:提出物ID, subs:[...]}]
 const PLAN = {
   "2026-11-09": {note: "TAC論文2回目を今日中に最後まで書き切る", items: [
-    ["gt", 30, 3, "演習1〜3 誤答（1周目）", "根拠箇所→理由→自分の言葉で再回答"],
+    ["gt", 30, 3, "演習1〜3 誤答（1周目）", "根拠箇所→理由→自分の言葉で再回答", {rv: 1}],
     ["jk", 60, 1, "B1じっくり①", "未実施・重要問題"],
     ["jk", 60, 1, "B1じっくり②", "理解が弱い問題"],
     ["fl", 120, 1, "TAC論文2回目 本文執筆", "骨子→ア/イ/ウ割当→問題固有条件→本文（最後まで）", {sub: "tac2"}]]},
@@ -199,31 +215,31 @@ const PLAN = {
     ["mk", 60, 3, "未見過去問 3問", "パターンを広げる"],
     ["ot", 45, 0, "TAC論文2回目 見直し・仕上げ", "誤字・設問対応・字数"],
     ["sb", 15, 1, "TAC論文2回目 提出", "提出管理に自動反映", {subs: ["tac2"]}],
-    ["gt", 60, 6, "演習4〜9 誤答（1周目）", "根拠箇所→理由→自分の言葉で再回答"]]},
+    ["gt", 60, 6, "演習4〜9 誤答（1周目）", "根拠箇所→理由→自分の言葉で再回答", {rv: 1}]]},
   "2026-11-11": {note: "本番①の失点を4分類", items: [
     ["hb", 90, 1, "B1本番90分①", "2大問・途中で解答を見ない"],
     ["aw", 60, 1, "本番① 答え合わせ・原因分析", "要求読違い／根拠見落とし／表現ズレ／時間不足"],
-    ["kk", 30, 1, "B2骨子①", "過去問の問題要求→ア/イ/ウ割当"],
+    ["kk", 30, 2, "B2骨子①②", "1問15分：自力3〜5分→補助→答えを隠してア・イ・ウ再現"],
     ["mk", 40, 2, "未見過去問 2問", ""],
-    ["gt", 30, 3, "演習1〜3 誤答（2周目）", ""]]},
+    ["gt", 30, 3, "演習1〜3 誤答（2周目）", "2周目でも間違えた問題だけ3周目へ", {rv: 2}]]},
   "2026-11-12": {note: "ITEC論文1を書き切る", items: [
     ["jk", 60, 1, "B1じっくり④", "未実施・重要問題"],
     ["mk", 40, 2, "未見過去問 2問", ""],
-    ["gt", 30, 3, "演習4〜6 誤答（2周目）", ""],
+    ["gt", 30, 3, "演習4〜6 誤答（2周目）", "2周目でも間違えた問題だけ3周目へ", {rv: 2}],
     ["fl", 120, 1, "ITEC論文1本目 執筆", "骨子込み120分で最後まで", {sub: "itec1"}]]},
   "2026-11-13": {note: "ITEC論文1を提出", items: [
-    ["gt", 30, 3, "演習7〜9 誤答（2周目）", "これで演習1〜9が2周"],
+    ["gt", 30, 3, "演習7〜9 誤答（2周目）", "これで演習1〜9が2周", {rv: 2}],
     ["jk", 60, 1, "B1じっくり⑤", ""],
     ["jk", 60, 1, "B1じっくり⑥", ""],
     ["ot", 30, 0, "ITEC論文1 見直し", ""],
     ["sb", 15, 1, "ITEC論文1 提出", "提出管理に自動反映", {subs: ["itec1"]}],
     ["mk", 40, 2, "未見過去問 2問", ""],
-    ["kk", 30, 1, "B2骨子②", ""]]},
+    ["kk", 30, 2, "B2骨子③④", "1問15分：自力3〜5分→補助→答えを隠してア・イ・ウ再現"]]},
   "2026-11-14": {note: "土曜：最大90分・家族時間優先。答え合わせは明日", items: [
     ["hb", 90, 1, "B1本番90分②", "2大問・途中で解答を見ない"]]},
   "2026-11-15": {note: "日曜：最大90分・家族時間優先", items: [
     ["aw", 60, 1, "本番② 答え合わせ・原因分析", "失点4分類"],
-    ["kk", 30, 1, "B2骨子③", ""]]},
+    ["kk", 30, 2, "B2骨子⑤⑥", "1問15分：自力3〜5分→補助→答えを隠してア・イ・ウ再現"]]},
   "2026-11-16": {note: "ITEC論文2を書き切る", items: [
     ["mk", 60, 3, "未見過去問 3問", ""],
     ["gt", 30, 3, "じっくり①〜⑥の誤答", ""],
@@ -234,31 +250,32 @@ const PLAN = {
     ["jk", 60, 1, "B1じっくり⑧", ""],
     ["ot", 45, 0, "ITEC論文2 見直し", ""],
     ["sb", 15, 1, "ITEC論文2 提出", "提出管理に自動反映", {subs: ["itec2"]}],
-    ["kk", 30, 1, "B2骨子④", ""],
+    ["kk", 30, 2, "B2骨子⑦⑧", "1問15分：自力3〜5分→補助→答えを隠してア・イ・ウ再現"],
     ["mk", 40, 2, "未見過去問 2問", ""]]},
   "2026-11-18": {note: "本番③の失点を4分類", items: [
     ["hb", 90, 1, "B1本番90分③", "2大問・途中で解答を見ない"],
     ["aw", 60, 1, "本番③ 答え合わせ・原因分析", "失点4分類"],
-    ["kk", 30, 1, "B2骨子⑤", ""],
-    ["gt", 40, 4, "演習の再誤答（3周目・残りのみ）", ""],
+    ["kk", 30, 2, "B2骨子⑨⑩", "1問15分：自力3〜5分→補助→答えを隠してア・イ・ウ再現"],
+    ["gt", 40, 4, "演習の再誤答（3周目）", "2周目でも間違えた問題だけ。正解済みは3周しない", {rv: 3}],
     ["mk", 20, 1, "未見過去問 1問", ""]]},
   "2026-11-19": {note: "弱点潰し＋骨子込み120分完走の確認", items: [
     ["mk", 60, 3, "未見過去問 3問", ""],
     ["gt", 30, 3, "じっくり⑦⑧・本番③の誤答", ""],
-    ["kk", 60, 2, "B2骨子⑥⑦", "骨子10〜15分を意識"],
+    ["kk", 60, 4, "B2骨子⑪〜⑭", "1問15分：自力3〜5分→補助→答えを隠してア・イ・ウ再現"],
     ["ot", 90, 0, "B1弱点復習", "本番①〜③の失点パターン潰し"]]},
-  "2026-11-20": {note: "TAC全国模試＝本番シミュレーション（紙答案・A-1/A-2はやらない）", items: [
-    ["hb", 90, 1, "TAC全国模試 B-1（本番90分④）", "紙答案・途中で解答を見ない", {sub: "mockB1"}],
-    ["fl", 120, 1, "TAC全国模試 B-2（フル論文④）", "紙答案・120分", {sub: "mockB2"}],
+  "2026-11-20": {note: "★最終実戦★ TAC全国模試を本番同様に（B1 2大問90分＋B2 骨子＋本文120分・紙答案・A-1/A-2はやらない）", items: [
+    ["hb", 90, 1, "【最終実戦】TAC全国模試 B-1（本番90分④）", "2大問90分・紙答案・途中で解答を見ない", {sub: "mockB1", fx: 1}],
+    ["fl", 120, 1, "【最終実戦】TAC全国模試 B-2（フル論文④）", "骨子作成＋本文120分・紙答案", {sub: "mockB2", fx: 1}],
     ["aw", 60, 1, "模試B1 答え合わせ・原因分析", "失点4分類"],
     ["sb", 30, 2, "TAC全国模試 答案提出（B1・B2）", "提出管理に自動反映", {subs: ["mockB1", "mockB2"]}]]},
-  "2026-11-21": {note: "土曜：最大90分。新しい問題に手を出さない", items: [
-    ["gt", 40, 4, "B1間違い問題（本番③・模試）", "本番で再発しそうなものだけ"],
-    ["ot", 50, 0, "再発しそうな弱点だけ復習", ""]]},
-  "2026-11-22": {note: "日曜：最大90分・早めに終了。新しい問題には手を出さない", items: [
-    ["ot", 20, 0, "B1典型ミス確認", "失点4分類メモを見る"],
-    ["kk", 30, 1, "B2固定骨子を白紙から再現", ""],
-    ["ot", 25, 0, "ア・イ・ウの展開確認", "早めに終了して休む"]]},
+  "2026-11-21": {note: "土曜：最大90分。新規問題を大量に追加しない（復習と再現だけ）", items: [
+    ["gt", 30, 3, "B1誤答（本番③・模試）", "本番で再発しそうなものだけ"],
+    ["ot", 30, 0, "B1典型ミス確認", "設問要求ミス／根拠見落とし／表現不足／時間不足のメモを見る"],
+    ["ot", 30, 0, "B2骨子再現", "これまでの骨子を白紙からア・イ・ウで再現（新しい問題はやらない）"]]},
+  "2026-11-22": {note: "日曜：新規問題は禁止・早めに終了。新しい問題には手を出さない", items: [
+    ["ot", 20, 0, "B1頻出ミス最終確認", "失点4分類メモだけ見る"],
+    ["ot", 25, 0, "B2固定論文の部品確認", "背景・課題・施策・工夫・評価・改善の部品を確認"],
+    ["ot", 25, 0, "B2変換パターン高速再現", "主役（背景〜改善）を変えてア・イ・ウを口頭で高速再現"]]},
   "2026-11-23": {note: "★本番当日★ 試験時間は受験票で必ず確認", items: []}
 };
 const EXAM_EVENTS = [
@@ -321,8 +338,13 @@ function blank() {
 }
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || blank(); } catch (e) { S = blank(); }
-S.tasks ||= {}; S.dayMemo ||= {}; S.subs ||= blank().subs;
-for (const s of SUBS) S.subs[s.id] ||= {status: s.init, submitted: "", returned: "", memo: s.memo};
+function norm() {
+  S.tasks ||= {}; S.dayMemo ||= {}; S.subs ||= blank().subs;
+  for (const s of SUBS) S.subs[s.id] ||= {status: s.init, submitted: "", returned: "", memo: s.memo};
+  S.line ||= {}; S.line.extra ||= {}; S.line.roles ||= {}; S.line.final ||= {};
+  for (const k of ["hb", "mk", "kk"]) S.line.extra[k] = Math.max(0, Number(S.line.extra[k]) || 0);
+}
+norm();
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 const st = id => (S.tasks[id] ||= {});
 
@@ -366,6 +388,50 @@ const STAGES = [
   {n: "Stage 4", name: "最終調整", from: "2026-11-21", to: "2026-11-22", sub: "新しいことはしない"},
   {n: "FINAL", name: "11/23 科目B本番", from: EXAM, to: EXAM, sub: "120分で完走"}
 ];
+
+/* ================= 絶対合格ライン（時間ではなく回数・問題数・得点・変換で判定） ================= */
+const MISS = [["req", "設問要求ミス"], ["evid", "根拠見落とし"], ["expr", "表現不足"], ["time", "時間不足"]];
+const ROLES = ["背景", "課題", "施策", "工夫", "評価", "改善"];
+const FINAL_CHECK = ["何が問われているか", "元論文のどの部品を使うか", "何を捨てるか", "何を追加するか", "アに何を書くか", "イに何を書くか", "ウに何を書くか"];
+const FX_DUE = "2026-11-20", SAFE_SCORE = 65;
+const doneOf = f => ALL_TASKS.filter(t => isDone(t.id) && f(t));
+const repOf = t => { const x = S.tasks[t.id], c = actCnt(t); return x.rep == null || x.rep === "" ? c : Math.min(c, Math.max(0, Number(x.rep) || 0)); };
+function hbScores() {
+  return doneOf(t => t.type === "hb").filter(t => S.tasks[t.id].score != null && S.tasks[t.id].score !== "")
+    .sort((a, b) => a.date.localeCompare(b.date) || (S.tasks[a.id].doneAt || 0) - (S.tasks[b.id].doneAt || 0))
+    .map(t => ({t, v: Number(S.tasks[t.id].score)}));
+}
+function lineData(td) {
+  const L = S.line, last2 = hbScores().slice(-2);
+  const isRv = t => t.opt.rv === 1 || t.opt.rv === 2;
+  const items = [
+    {k: "hb", name: "B1本番90分（2大問）", short: "B1本番セット", unit: "回", min: 4, tgt: 5, extra: true,
+     a: doneOf(t => t.type === "hb").reduce((s, t) => s + actCnt(t), 0) + L.extra.hb, plan: t => t.type === "hb" ? t.cnt : 0},
+    {k: "rv", name: "B1誤答2周（演習1〜9）", short: "B1誤答2周", unit: "大問", min: 18, tgt: 18,
+     a: Math.min(18, doneOf(isRv).reduce((s, t) => s + Math.min(actCnt(t), t.cnt), 0)), plan: t => isRv(t) ? t.cnt : 0},
+    {k: "mk", name: "B1未見", short: "B1未見", unit: "大問", min: 10, tgt: 15, extra: true,
+     a: doneOf(t => t.type === "mk").reduce((s, t) => s + actCnt(t), 0) + L.extra.mk, plan: t => t.type === "mk" ? t.cnt : 0},
+    {k: "sc", name: `B1得点（直近2回${SAFE_SCORE}点以上）`, short: `B1得点${SAFE_SCORE}点以上`, unit: "回", min: 2, tgt: 2,
+     a: last2.filter(x => x.v >= SAFE_SCORE).length, due: FX_DUE},
+    {k: "kk", name: "B2骨子（ア・イ・ウ再現まで）", short: "B2骨子", unit: "問", min: 10, tgt: 15, extra: true,
+     a: doneOf(t => t.type === "kk").reduce((s, t) => s + repOf(t), 0) + L.extra.kk, plan: t => t.type === "kk" ? t.cnt : 0},
+    {k: "fl", name: "B2フル論文（固定4本）", short: "B2フル論文", unit: "本", min: 4, tgt: 4,
+     a: doneOf(t => t.type === "fl").length, plan: t => t.type === "fl" ? 1 : 0},
+    {k: "ro", name: "B2主役変換（背景〜改善）", short: "B2主役変換", unit: "要素", min: 6, tgt: 6,
+     a: ROLES.filter(r => L.roles[r]).length, due: "2026-11-19"},
+    {k: "fx", name: "11/20 最終実戦", short: "11/20最終実戦", unit: "", min: 1, tgt: 1,
+     a: ALL_TASKS.filter(t => t.opt.fx).every(t => isDone(t.id)) ? 1 : 0, due: FX_DUE}
+  ];
+  for (const it of items) {
+    it.p = Math.min(1, it.a / it.min); it.left = Math.max(0, it.min - it.a);
+    if (it.plan) {
+      it.exp = Math.min(it.min, ALL_TASKS.filter(t => t.date < td).reduce((s, t) => s + it.plan(t), 0));
+      it.cap = it.a + ALL_TASKS.filter(t => t.date >= td && !isDone(t.id)).reduce((s, t) => s + it.plan(t), 0);
+      it.behind = it.left > 0 && (it.a < it.exp || it.cap < it.min);
+    } else it.behind = it.left > 0 && td > it.due;
+  }
+  return {items, pct: items.reduce((s, it) => s + it.p, 0) / items.length, last2};
+}
 
 /* ================= 操作 ================= */
 function syncSubsOnDone(t, done) {
@@ -516,7 +582,11 @@ function taskCard(t, td, nextId) {
   <div class="ctl">${done
     ? `<button data-act="undo" data-id="${t.id}">完了を取り消す</button>
        <label>実績<input type="number" min="0" max="600" step="5" data-f="actMin" data-id="${t.id}" value="${actMin(t)}">分</label>
-       ${t.type !== "ot" ? `<label>実績<input type="number" min="0" max="50" step="1" data-f="actCnt" data-id="${t.id}" value="${actCnt(t)}">${TYPES[t.type].unit}</label>` : ""}`
+       ${t.type !== "ot" ? `<label>実績<input type="number" min="0" max="50" step="1" data-f="actCnt" data-id="${t.id}" value="${actCnt(t)}">${TYPES[t.type].unit}</label>` : ""}
+       ${t.type === "hb" ? `<label>得点（推定）<input type="number" min="0" max="100" data-f="score" data-id="${t.id}" value="${esc(x.score ?? "")}" placeholder="点">点</label>
+         ${MISS.map(([k, l]) => `<label>${l}<input type="number" min="0" max="20" data-f="miss_${k}" data-id="${t.id}" value="${esc(x["miss_" + k] ?? "")}">問</label>`).join("")}` : ""}
+       ${t.opt.rv === 2 ? `<label>2周目でも間違えた<input type="number" min="0" max="${t.cnt}" data-f="wrong2" data-id="${t.id}" value="${esc(x.wrong2 ?? "")}">大問</label>` : ""}
+       ${t.type === "kk" ? `<label>答えを隠してア・イ・ウ再現できた<input type="number" min="0" max="${actCnt(t)}" data-f="rep" data-id="${t.id}" value="${repOf(t)}">問</label>` : ""}`
     : `${x.running ? "" : `<button data-act="start" data-id="${t.id}">開始</button>`}<button class="done" data-act="done" data-id="${t.id}">✓ 完了</button>`}</div>
   <details><summary>問題名・メモ${x.memo ? "（あり）" : ""}</summary>
    <div class="ctl"><label style="flex:1 1 100%">問題名<input style="flex:1" type="text" data-f="name" data-id="${t.id}" value="${esc(x.name || "")}" placeholder="${esc(t.title)}"></label>
@@ -533,6 +603,37 @@ function scheduleHTML(d, td) {
   return `<div class="notes"><b>${md(d)} ${k}</b>${k === "休日" ? `（最大${WEEKEND_CAP}分・家族時間優先）` : k === "平日" ? "（平日は学習量多め）" : ""}　予定 ${day.plan}分<br>${esc(PLAN[d].note)}</div>
   ${rows.map(r => r.h).join("")}
   <div style="margin-top:10px"><label class="sub">この日のメモ</label><textarea data-f="dayMemo" data-day="${d}" placeholder="気づき・反省・明日への申し送り">${esc(S.dayMemo[d] || "")}</textarea></div>`;
+}
+function secLine(td) {
+  const D = lineData(td), risk = D.items.filter(it => it.behind), rest = D.items.filter(it => it.left > 0 && !it.behind);
+  const L = S.line, phrase = it => it.k === "fx" ? `${it.short} 未実施` : it.k === "sc" ? `${it.short} あと${it.left}回` : `${it.short} あと${it.left}${it.unit}`;
+  const card = it => {
+    const st = it.left === 0 ? `<span class="tag t-ok">✓ 最低ライン到達</span>` : it.behind ? `<span class="tag t-warn">⚠ ${it.k === "fx" ? "期限超過・未実施" : "遅れ・あと" + it.left + it.unit}</span>` : `<span class="tag t-ev">${it.k === "fx" ? "11/20までに実施" : "あと" + it.left + it.unit}</span>`;
+    const ct = it.k === "fx" ? (it.a ? "実施済み" : "未実施") : `<span data-v>${it.a}</span> / ${it.tgt}${it.unit}`;
+    return `<div class="li ${it.left === 0 ? "ok" : it.behind ? "risk" : ""}" data-line="${it.k}"><div class="nm">${esc(it.name)}</div>
+    <div class="row"><span class="ct">${ct}</span>${it.min < it.tgt ? `<span class="sub">最低${it.min}${it.unit}</span>` : ""}<span class="spacer"></span>${st}</div>
+    <div class="bar"><i style="width:${Math.min(100, it.a / it.tgt * 100)}%;background:${it.left === 0 ? "var(--ok)" : it.behind ? "var(--warn)" : "var(--navy)"}"></i>${it.min < it.tgt ? `<span class="minmark" style="left:${it.min / it.tgt * 100}%"></span>` : ""}</div>
+    ${it.plan && it.left ? `<div class="sub">今日までの計画 ${it.exp}${it.unit} ／ 計画どおりなら最終 ${Math.min(it.cap, 99)}${it.unit}</div>` : ""}
+    ${it.extra ? `<div class="ctl"><button data-act="extra" data-k="${it.k}" data-n="1">＋ 計画外で1${it.unit}実施</button>${L.extra[it.k] ? `<button data-act="extra" data-k="${it.k}" data-n="-1">−1（計画外 ${L.extra[it.k]}）</button>` : ""}</div>` : ""}</div>`;
+  };
+  const rv2 = doneOf(t => t.opt.rv === 2), w2 = rv2.filter(t => S.tasks[t.id].wrong2 != null && S.tasks[t.id].wrong2 !== "");
+  const w2n = w2.reduce((s, t) => s + (Number(S.tasks[t.id].wrong2) || 0), 0), r3 = doneOf(t => t.opt.rv === 3).reduce((s, t) => s + actCnt(t), 0);
+  const sc = hbScores(), missT = Object.fromEntries(MISS.map(([k]) => [k, doneOf(t => t.type === "hb").reduce((s, t) => s + (Number(S.tasks[t.id]["miss_" + k]) || 0), 0)]));
+  const mkNames = doneOf(t => t.type === "mk").map(t => S.tasks[t.id].name).filter(Boolean);
+  return `<section class="card line" id="sec-line"><h2>絶対合格ライン</h2>
+  <div class="lineTop"><div class="big" id="linePct">${Math.round(D.pct * 100)}%</div><div class="sub" style="flex:1 1 260px">絶対合格ライン達成率。学習時間ではなく、本番演習の回数・問題数・骨子数・フル論文数・得点・主役変換・最終実戦の8項目について、最低ラインへの到達度を平均しています。</div></div>
+  ${risk.length ? `<div class="alert warn" id="lineWarn">⚠ このままでは未達の可能性があります<ul class="risklist">${risk.map(it => `<li>${esc(phrase(it))}</li>`).join("")}</ul></div>` : D.items.every(it => !it.left) ? `<div class="alert ok" id="lineWarn">✓ 絶対合格ラインをすべて達成</div>` : `<div class="alert info" id="lineWarn">計画どおり進行中。残り：${rest.map(phrase).map(esc).join("／")}</div>`}
+  <div class="lgrid">${D.items.map(card).join("")}</div>
+  <div class="lsub"><b>B1</b>
+   <div class="sub">誤答3周目：${w2.length ? (w2n ? `対象 <b>${w2n}</b>大問（2周目でも間違えた問題だけ）／実施 ${r3}大問` : "2周目の誤答なし → 3周目は不要（正解済みは3周しない）") : "2周目を終えたら各タスクに「2周目でも間違えた大問数」を入れると、3周目の対象数が出ます"}</div>
+   <div class="sub" id="scoreLine">本番形式の得点：${sc.length ? sc.map(x => `${md(x.t.date)} ${x.v}点`).join("、") : "未記録（本番90分タスクの完了後に入力）"}${D.last2.length === 2 ? `　→ 直近2回 ${D.last2.every(x => x.v >= SAFE_SCORE) ? `<span class="tag t-ok">安全圏</span>` : `<span class="tag t-warn">${SAFE_SCORE}点未満あり・60点ぎりぎりでなく安全圏へ</span>`}` : ""}</div>
+   <div class="sub">失点原因の累計：${MISS.map(([k, l]) => `${l} ${missT[k]}`).join("・")}</div>
+   <div class="sub">未見問題（年代・テーマの偏り確認）：${mkNames.length ? mkNames.map(esc).join("、") : "各タスクの「問題名」に年度・テーマを記録すると一覧になります"}</div></div>
+  <div class="lsub"><b>B2 主役変換</b> <span class="sub">元論文1本を基盤に、どれを主役にしても書けるか（練習したらタップ）</span>
+   <div class="toggles">${ROLES.map(r => `<button data-act="role" data-k="${r}" aria-pressed="${!!L.roles[r]}">${L.roles[r] ? "✓ " : ""}${r}が主役</button>`).join("")}</div></div>
+  <div class="lsub"><b>B2 最終到達状態</b> <span class="sub">本番問題を見て5〜10分で次を決められるか（自己判定・達成率には含めない） ${FINAL_CHECK.filter((_, i) => L.final[i]).length} / ${FINAL_CHECK.length}</span>
+   <div class="toggles">${FINAL_CHECK.map((c, i) => `<button data-act="fin" data-k="${i}" aria-pressed="${!!L.final[i]}">${L.final[i] ? "✓ " : ""}${c}</button>`).join("")}</div></div>
+  </section>`;
 }
 function secToday(td) {
   if (!DAY[td]) return "";
@@ -611,7 +712,7 @@ function secDays(td) {
 function render() {
   const td = today();
   const y = window.scrollY;
-  document.getElementById("app").innerHTML = secCountdown(td) + secNext(td) + secAch(td) + secNums(td) + secToday(td) + secProgress() + secChart(td) + secSubs(td) + secDays(td);
+  document.getElementById("app").innerHTML = secCountdown(td) + secNext(td) + secAch(td) + secNums(td) + secLine(td) + secToday(td) + secProgress() + secChart(td) + secSubs(td) + secDays(td);
   window.scrollTo(0, y);
   lastDay = td;
 }
@@ -624,6 +725,9 @@ app.addEventListener("click", e => {
   if (b.dataset.act === "start") startTask(b.dataset.id);
   else if (b.dataset.act === "done") completeTask(b.dataset.id);
   else if (b.dataset.act === "undo") undoTask(b.dataset.id);
+  else if (b.dataset.act === "extra") { const k = b.dataset.k; S.line.extra[k] = Math.max(0, S.line.extra[k] + Number(b.dataset.n)); save(); render(); toast(Number(b.dataset.n) > 0 ? "計画外の実施を記録しました" : "取り消しました"); }
+  else if (b.dataset.act === "role") { const k = b.dataset.k; if (S.line.roles[k]) delete S.line.roles[k]; else S.line.roles[k] = today(); save(); render(); }
+  else if (b.dataset.act === "fin") { const k = b.dataset.k; if (S.line.final[k]) delete S.line.final[k]; else S.line.final[k] = today(); save(); render(); }
   else if (b.dataset.nav != null) {
     const n = Number(b.dataset.nav), td = today();
     viewDate = n === 0 ? (DAY[td] ? td : DATES[0]) : DATES[Math.min(DATES.length - 1, Math.max(0, DATES.indexOf(viewDate) + n))];
@@ -635,7 +739,9 @@ app.addEventListener("change", e => {
   if (el.dataset.f === "dayMemo") { S.dayMemo[el.dataset.day] = el.value; save(); return; }
   if (el.dataset.f) {
     const x = st(el.dataset.id), f = el.dataset.f;
-    if (f === "actMin" || f === "actCnt") x[f] = Math.max(0, Number(el.value) || 0); else x[f] = el.value;
+    if (f === "actMin" || f === "actCnt") x[f] = Math.max(0, Number(el.value) || 0);
+    else if (["score", "wrong2", "rep"].includes(f) || f.startsWith("miss_")) { if (el.value === "") delete x[f]; else x[f] = Math.max(0, Math.min(f === "score" ? 100 : 99, Number(el.value) || 0)); }
+    else x[f] = el.value;
     save(); if (f !== "memo") render(); return;
   }
   if (el.dataset.sf) {
@@ -666,7 +772,7 @@ document.getElementById("exportBtn").onclick = () => {
 };
 document.getElementById("importFile").onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
-  try { const d = JSON.parse(await f.text()); if (!d.tasks || !d.subs) throw 0; if (confirm("現在のデータを読み込んだデータで置き換えますか？")) { S = d; save(); render(); toast("読み込みました"); } }
+  try { const d = JSON.parse(await f.text()); if (!d.tasks || !d.subs) throw 0; if (confirm("現在のデータを読み込んだデータで置き換えますか？")) { S = d; norm(); save(); render(); toast("読み込みました"); } }
   catch (err) { alert("読み込めませんでした（バックアップJSONを選んでください）"); }
   e.target.value = "";
 };
